@@ -101,7 +101,7 @@
     </div>
 
     <!-- JS -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    <!-- vue <script src="{{ asset('js/app.js') }}"></script> -->
     <!-- <script src="vendor/jquery/jquery.min.js"></script> -->
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</body>
 </html>
