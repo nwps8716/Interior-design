@@ -23,4 +23,9 @@ Route::get('/login', function () {
     return view('login'); 
 });
 
-Route::post('/login/user', 'User\UserController@postLogin');
+Route::get('/adduser', function () {
+    return view('adduser');
+});
+
+Route::post('/user/login', 'User\UserController@postLogin');
+Route::post('/user/create', 'User\UserController@createUser');

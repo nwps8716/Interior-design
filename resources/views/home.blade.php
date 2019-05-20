@@ -15,6 +15,7 @@
 </head>
 
 <body>
+  @include('sweetalert::alert')
 
   <div class="d-flex" id="wrapper">
 
