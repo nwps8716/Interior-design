@@ -14,11 +14,10 @@
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 </head>
 <body>
-
+    @include('sweetalert::alert')
     <div class="main">
-
-        <!-- Sign up form -->
-        <section class="signup">
+        <!-- 註冊 -->
+        {{-- <section class="signup">
             <div class="container">
                 <div class="signup-content">
                     <div class="signup-form">
@@ -55,7 +54,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> --}}
 
         <!-- Sing in  Form -->
         <section class="sign-in">
@@ -63,41 +62,33 @@
                 <div class="signin-content">
                     <div class="signin-image">
                         <figure><img src="{{ asset('images/signin-image.jpg') }}" alt="sing up image"></figure>
-                        <a href="#" class="signup-image-link">Create an account</a>
+                        <a href="#" class="signup-image-link">Create User</a>
                     </div>
 
                     <div class="signin-form">
-                        <h2 class="form-title">Sign up</h2>
-                        <form method="POST" class="register-form" id="login-form">
+                        <h2 class="form-title">窩百態系統</h2>
+                        <form action="/login/user"  method="POST" class="register-form" id="login-form">
+                            {{ csrf_field() }}
                             <div class="form-group">
                                 <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="text" name="your_name" id="your_name" placeholder="Your Name"/>
+                                <input type="text" name="user_name" id="user_name" placeholder="Your Name"/>
                             </div>
                             <div class="form-group">
                                 <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                                <input type="password" name="your_pass" id="your_pass" placeholder="Password"/>
+                                <input type="password" name="password" id="password" placeholder="Password"/>
                             </div>
                             <div class="form-group">
                                 <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
                                 <label for="remember-me" class="label-agree-term"><span><span></span></span>Remember me</label>
                             </div>
                             <div class="form-group form-button">
-                                <input type="submit" name="signin" id="signin" class="form-submit" value="Log in"/>
+                                <input type="submit" name="signin" id="signin" class="form-submit" value="Login"/>
                             </div>
                         </form>
-                        <div class="social-login">
-                            <span class="social-label">Or login with</span>
-                            <ul class="socials">
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-facebook"></i></a></li>
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-twitter"></i></a></li>
-                                <li><a href="#"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
             </div>
         </section>
-
     </div>
 
     <!-- JS -->

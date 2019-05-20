@@ -22,3 +22,5 @@ Route::get('/home', function () {
 Route::get('/login', function () {
     return view('login'); 
 });
+
+Route::post('/login/user', 'User\UserController@postLogin');
