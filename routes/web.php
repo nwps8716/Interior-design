@@ -12,20 +12,17 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('login');
 });
 
-Route::get('/home', function () {
-    return view('home');
-});
+// Route::get('/home', function () {
+//     return view('home');
+// });
 
-Route::get('/login', function () {
-    return view('login'); 
-});
+Route::get('/home', 'HomeController@index');
 
-Route::get('/adduser', function () {
-    return view('adduser');
-});
-
-Route::post('/user/login', 'User\UserController@postLogin');
+Route::get('/login', 'User\UserController@getLogin');
+Route::post('/login', 'User\UserController@postLogin');
+Route::get('/logout', 'User\UserController@getLogout');
+Route::get('/adduser', 'User\UserController@getCreateUser');
 Route::post('/user/create', 'User\UserController@createUser');
