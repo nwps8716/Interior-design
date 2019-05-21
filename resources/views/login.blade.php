@@ -23,7 +23,7 @@
 
                     <div class="signin-form">
                         <h2 class="form-title">窩百態系統</h2>
-                        <form action="/user/login"  method="POST" class="register-form" id="login-form">
+                        <form action="/login"  method="POST" class="register-form" id="login-form">
                             {{ csrf_field() }}
                             <div class="form-group">
                                 <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>

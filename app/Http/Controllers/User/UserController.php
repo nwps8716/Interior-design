@@ -11,6 +11,20 @@ use Alert;
 class UserController extends Controller
 {
     /**
+     * 取得登入頁面
+     *
+     * @return boolean
+     */
+    public function getLogin(Request $_oRequest)
+    {
+        if ($_oRequest->session()->has('login_user_info')) {
+            return redirect('home');
+        }
+
+        return view('login');
+    }
+
+    /**
      * 使用者登入
      *
      * @return boolean
@@ -37,8 +51,44 @@ class UserController extends Controller
             return redirect()->back();
         }
 
+        ## 使用者資訊
+        $_oRequest->session()->put(
+            'login_user_info',
+            [
+                'user_name' => $sUserName,
+                'level' => $aUserList['level'],
+            ]
+        );
+
         toast('登入成功','success','top-right');
         return redirect('home');
+    }
+
+    /**
+     * 使用者登出
+     *
+     * @return boolean
+     */
+    public function getLogout(Request $_oRequest)
+    {
+        $_oRequest->session()->flush();
+
+        toast('登出成功','success','top-right');
+        return redirect('login');
+    }
+
+    /**
+     * 取得新增使用者頁面
+     *
+     * @return boolean
+     */
+    public function getCreateUser(Request $_oRequest)
+    {
+        if ($_oRequest->session()->has('login_user_info')) {
+            return redirect('home');
+        }
+
+        return view('adduser');
     }
 
     /**

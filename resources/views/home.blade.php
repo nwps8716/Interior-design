@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>XX室內裝潢</title>
+  <title>窩百態室內裝潢</title>
 
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
@@ -52,7 +52,7 @@
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="#">修改密碼</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">登出</a>
+                <a class="dropdown-item" href="/logout">登出</a>
               </div>
             </li>
           </ul>
