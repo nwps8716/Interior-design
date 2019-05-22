@@ -60,7 +60,9 @@
       </nav>
 
       <div class="container-fluid">
-        <h1 class="mt-4">功能顯示區塊</h1>
+        @section('feature')
+          <h1>歡迎使用窩百態後台</h1>
+        @show
       </div>
     </div>
     <!-- /#page-content-wrapper -->
@@ -97,7 +99,7 @@
     }
 
     #sidebar-wrapper .sidebar-heading {
-        padding: 0.875rem 1.25rem;
+        padding: 0.775rem 1.25rem;
         font-size: 1.2rem;
     }
 

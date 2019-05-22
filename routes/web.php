@@ -10,7 +10,6 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/', function () {
     return redirect('login');
 });
@@ -26,3 +25,4 @@ Route::post('/login', 'User\UserController@postLogin');
 Route::get('/logout', 'User\UserController@getLogout');
 Route::get('/adduser', 'User\UserController@getCreateUser');
 Route::post('/user/create', 'User\UserController@createUser');
+Route::get('/pings', 'Pings\PingsController@index');
