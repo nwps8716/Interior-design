@@ -21,10 +21,10 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading">室內裝潢-後台</div>
+      <div class="sidebar-heading"><a href="/home" class="list-group-item-action">室內裝潢-後台</a></div>
       <div class="list-group list-group-flush">
         <a href="#" class="list-group-item list-group-item-action bg-light">坪數估價</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">工程單價</a>
+        <a href="/unitprice/engineering" class="list-group-item list-group-item-action bg-light">工程單價</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">系統單價</a>
       </div>
     </div>
@@ -34,7 +34,7 @@
     <div id="page-content-wrapper">
 
       <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <button class="btn btn-primary" id="menu-toggle">選單收合</button>
+        <button class="btn btn-primary" id="menu-toggle">選單</button>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -42,9 +42,6 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="#">首頁<span class="sr-only">(current)</span></a>
-            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 使用者名稱
@@ -63,6 +60,8 @@
         @section('feature')
           <h1>歡迎使用窩百態後台</h1>
         @show
+        @section('content')
+        @show
       </div>
     </div>
     <!-- /#page-content-wrapper -->
@@ -76,6 +75,7 @@
 
   <!-- Menu Toggle Script -->
   <script>
+    // 選單
     $("#menu-toggle").click(function(e) {
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");

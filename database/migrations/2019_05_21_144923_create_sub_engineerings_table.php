@@ -13,7 +13,7 @@ class CreateSubEngineeringsTable extends Migration
      */
     public function up()
     {
-        Schema::create('sub_engineerings', function (Blueprint $table) {
+        Schema::create('sub_engineering', function (Blueprint $table) {
             $table->increments('sub_project_id')->unique()->comment('工程子項目ID');
             $table->string('sub_project_name', 255)->comment('工程子項目名稱');
             $table->smallInteger('unti_price')->comment('工程子項目單價');

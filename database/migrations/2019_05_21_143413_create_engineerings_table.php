@@ -13,7 +13,7 @@ class CreateEngineeringsTable extends Migration
      */
     public function up()
     {
-        Schema::create('engineerings', function (Blueprint $table) {
+        Schema::create('engineering', function (Blueprint $table) {
             $table->increments('project_id')->unique()->comment('工程大項目ID');
             $table->string('project_name', 255)->comment('工程大項目名稱');
             $table->unsignedInteger('sort')->comment('排序');
