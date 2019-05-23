@@ -39,6 +39,7 @@ class UnitPriceController extends Controller
         ## 整理資料
         foreach ($aSubEngineering as $iKey => $aValue) {
             $aResult[$aValue['project_id']][] = [
+                'sub_project_id' => $aValue['sub_project_id'],
                 'sub_project_name' => $aValue['sub_project_name'],
                 'unti_price' => $aValue['unti_price'],
                 'unti' => $aValue['unti']
@@ -49,5 +50,54 @@ class UnitPriceController extends Controller
             'engineering' => $aEngineering,
             'sub_engineering' => $aResult
         ]);
+    }
+
+    /**
+     * 更新子項目內容
+     *
+     * @return array
+     */
+    public function putSubEngineering(
+        Request $_oRequest,
+        SubEngineeringModle $_oSubEngineeringModle
+    )
+    {
+        $iSubProjectID = (int) $_oRequest->input('id');
+        $sSubProjectName = $_oRequest->input('name');
+        $iUntiPrice = (int) $_oRequest->input('unti_price');
+        $sUnti = $_oRequest->input('unti');
+
+        ## 更新工程子項目
+        $bResult = $_oSubEngineeringModle
+            ->where('sub_project_id', $iSubProjectID)
+            ->update(
+                [
+                    'sub_project_name' => $sSubProjectName,
+                    'unti_price' => $iUntiPrice,
+                    'unti' => $sUnti,
+                ]
+            );
+
+        return response()->json(['result' => true]);
+    }
+
+    /**
+     * 刪除子項目內容
+     *
+     * @return array
+     */
+    public function deleteSubEngineering(
+        Request $_oRequest,
+        SubEngineeringModle $_oSubEngineeringModle
+    )
+    {
+        $iSubProjectID = (int) $_oRequest->input('id');
+
+        ## 刪除工程子項目
+        $bResult = $_oSubEngineeringModle
+            ->where('sub_project_id', $iSubProjectID)
+            ->delete();
+
+        return response()->json(['result' => true]);
     }
 }
