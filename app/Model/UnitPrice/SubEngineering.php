@@ -13,7 +13,7 @@ class SubEngineering extends Model
         'unti',
         'project_id',
     ];
-
     protected $table = 'sub_engineering';
     protected $primaryKey = 'sub_project_id';
+    public $timestamps = false;
 }
