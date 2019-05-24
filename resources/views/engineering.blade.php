@@ -96,8 +96,80 @@
       </div>
   </div>
 @endsection
+
+
+@section('script')
+@parent
+<script>
+  // 觸發修改子項目Dialog
+  $(document).on('click', '.edit-modal', function() {
+      $('#footer_action_button').text("Update");
+      $('#footer_action_button').addClass('glyphicon-check');
+      $('#footer_action_button').removeClass('glyphicon-trash');
+      $('.actionBtn').addClass('btn-success');
+      $('.actionBtn').removeClass('btn-danger');
+      $('.actionBtn').addClass('edit');
+      $('.modal-title').text($(this).data('projectname'));
+      $('.form-horizontal').show();
+      $('.deleteContent').hide();
+      $('#sub_project_id').val($(this).data('id'));
+      $('#sub_project_name').val($(this).data('name'));
+      $('#unti_price').val($(this).data('untiprice'));
+      $('#unti').val($(this).data('unti'));
+      $('#editSubProject').modal('show');
+  });
+  // 更新子項目
+  $('.modal-footer').on('click', '.edit', function() {
+    $.ajax({
+      type: 'put',
+      url: '/subengineering',
+      data: {
+        'id': $("#sub_project_id").val(),
+        'name': $('#sub_project_name').val(),
+        'unti_price': $('#unti_price').val(),
+        'unti': $('#unti').val()
+      },
+      success: function(resp) {
+        location.reload(true);
+      }
+    });
+  });
+  // 觸發刪除子項目Dialog
+  $(document).on('click', '.delete-modal', function() {
+      $('#footer_action_button').text("Delete");
+      $('#footer_action_button').removeClass('glyphicon-check');
+      $('#footer_action_button').addClass('glyphicon-trash');
+      $('.actionBtn').removeClass('btn-success');
+      $('.actionBtn').addClass('btn-danger');
+      $('.actionBtn').addClass('delete');
+      $('.modal-title').text($(this).data('projectname'));
+      $('.deleteContent').show();
+      $('.form-horizontal').hide();
+      $('#sub_project_id').val($(this).data('id'));
+      $('.sub_project_name').html($(this).data('name'));
+      $('#editSubProject').modal('show');
+  });
+  // 刪除子項目
+  $('.modal-footer').on('click', '.delete', function() {
+    $.ajax({
+      type: 'delete',
+      url: '/subengineering',
+      data: {
+        'id': $("#sub_project_id").val()
+      },
+      success: function(resp) {
+        location.reload(true);
+      }
+    });
+  });
+</script>
+@endsection
+
+@section('style')
+@parent
 <style>
-.sub_project_name {
-  color: red;
-}
+  .sub_project_name {
+    color: red;
+  }
 </style>
+@endsection
