@@ -53,6 +53,33 @@ class UnitPriceController extends Controller
     }
 
     /**
+     * 新增子項目內容
+     *
+     * @return array
+     */
+    public function createSubEngineering(
+        Request $_oRequest,
+        SubEngineeringModle $_oSubEngineeringModle
+    )
+    {
+        $iProjectID = (int) $_oRequest->input('project_id');
+        $sSubProjectName = $_oRequest->input('sub_project_name');
+        $iUntiPrice = (int) $_oRequest->input('unti_price');
+        $sUnti = $_oRequest->input('unti');
+
+        $bResult = $_oSubEngineeringModle->insert(
+            [
+                'sub_project_name' => $sSubProjectName,
+                'project_id' => $iProjectID,
+                'unti_price' => $iUntiPrice,
+                'unti' => $sUnti
+            ]
+        );
+
+        return response()->json(['result' => true]);
+    }
+
+    /**
      * 更新子項目內容
      *
      * @return array
@@ -97,6 +124,31 @@ class UnitPriceController extends Controller
         $bResult = $_oSubEngineeringModle
             ->where('sub_project_id', $iSubProjectID)
             ->delete();
+
+        return response()->json(['result' => true]);
+    }
+
+    /**
+     * 新增工程項目分類
+     *
+     * @return array
+     */
+    public function createEngineering(
+        Request $_oRequest,
+        EngineeringModle $_oEngineeringModle
+    )
+    {
+        $sProjectName = $_oRequest->input('project_name');
+
+        $iLastSort = $_oEngineeringModle
+            ->max('sort');
+
+        $bResult = $_oEngineeringModle->insert(
+            [
+                'project_name' => $sProjectName,
+                'sort' => ($iLastSort + 1)
+            ]
+        );
 
         return response()->json(['result' => true]);
     }

@@ -22,5 +22,7 @@ Route::get('/adduser', 'User\UserController@getCreateUser');
 Route::post('/user/create', 'User\UserController@createUser');
 Route::get('/pings', 'Pings\PingsController@index');
 Route::get('/unitprice/engineering', 'UnitPrice\UnitPriceController@getEngineeringList');
+Route::post('/subengineering', 'UnitPrice\UnitPriceController@createSubEngineering');
 Route::put('/subengineering', 'UnitPrice\UnitPriceController@putSubEngineering');
 Route::delete('/subengineering', 'UnitPrice\UnitPriceController@deleteSubEngineering');
+Route::post('/engineering', 'UnitPrice\UnitPriceController@createEngineering');

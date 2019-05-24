@@ -1,8 +1,11 @@
 @extends('home')
 
 @section('feature')
-  <h1>工程單價列表</h1>
-  <button id="edit-sub-preject" class="btn btn-primary btn-submit">修改子項目</button>
+  <div>
+      <h1 class='content-title'>工程單價列表</h1>
+      <button class="add-project btn btn-primary">新增工程分類</button>
+      <button class="add-sub-project btn btn-primary">新增工程子項目</button>
+  </div>
 @endsection
 
 @section('content')
@@ -95,8 +98,87 @@
           </div>
       </div>
   </div>
-@endsection
 
+  <!-- 新增工程項目分類 -->
+  <div id="addProject" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title"></h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <form class="form-horizontal" role="form">
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="project_name">工程分類名稱:</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="project_name">
+                  </div>
+                </div>
+              </form>
+              <div class="modal-footer">
+                <button type="button" class="btn actionBtn" data-dismiss="modal">
+                  <span id="add_button" class='glyphicon'>Add</span>
+                </button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">
+                  <span class='glyphicon glyphicon-remove'></span> Close
+                </button>
+              </div>
+            </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- 新增工程項目 - 子項目 -->
+  <div id="addSubProject" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title"></h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <form class="form-horizontal" role="form">
+                <div class="form-group">
+                  <label class="control-label col-sm-10" for="project_name">請選擇要新增在哪個工程項目大類底下:</label>
+                  <select class="select-engineering">
+                    @foreach($engineering as $id => $projectname)
+                      <option value="{{$id}}">{{$projectname}}</option>
+                    @endforeach
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="subproject_name">工程子項目名稱:</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="subproject_name">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="untiprice">單價:</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="untiprice">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="unitname">單位:</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="unitname">
+                  </div>
+                </div>
+              </form>
+              <div class="modal-footer">
+                <button type="button" class="btn actionBtn" data-dismiss="modal">
+                  <span id="add_button" class='glyphicon'>Add</span>
+                </button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">
+                  <span class='glyphicon glyphicon-remove'></span> Close
+                </button>
+              </div>
+            </div>
+          </div>
+      </div>
+  </div>
+@endsection
 
 @section('script')
 @parent
@@ -162,14 +244,71 @@
       }
     });
   });
+  // 新增工程項目分類 Dialog
+  $(document).on('click', '.add-project', function() {
+      $('#add_button').addClass('glyphicon-trash');
+      $('.actionBtn').addClass('btn-success');
+      $('.actionBtn').addClass('addProject');
+      $('.modal-title').text('新增工程項目分類');
+      $('.form-horizontal').show();
+      $('#addProject').modal('show');
+  });
+  // 新增工程項目分類
+  $('.modal-footer').on('click', '.addProject', function() {
+    $.ajax({
+      type: 'post',
+      url: '/engineering',
+      data: {
+        'project_name': $("#project_name").val()
+      },
+      success: function(resp) {
+        location.reload(true);
+      }
+    });
+  });
+  // 新增工程項目 - 子項目 Dialog
+  $(document).on('click', '.add-sub-project', function() {
+      $('#add_button').addClass('glyphicon-trash');
+      $('.actionBtn').addClass('btn-success');
+      $('.actionBtn').addClass('addSubProject');
+      $('.modal-title').text('新增工程項目 - 子項目');
+      $('.form-horizontal').show();
+      $('#addSubProject').modal('show');
+  });
+  // 新增工程項目 - 子項目
+  $('.modal-footer').on('click', '.addSubProject', function() {
+    $.ajax({
+      type: 'post',
+      url: '/subengineering',
+      data: {
+        'project_id': $(".select-engineering").val(),
+        'sub_project_name': $("#subproject_name").val(),
+        'unti_price': $("#untiprice").val(),
+        'unti': $("#unitname").val()
+      },
+      success: function(resp) {
+        location.reload(true);
+      }
+    });
+  });
 </script>
 @endsection
 
 @section('style')
 @parent
 <style>
-  .sub_project_name {
-    color: red;
-  }
+.sub_project_name {
+  color: red;
+}
+.select-engineering {
+  margin-left: 15px;
+  width: 200px;
+}
+.add-project {
+  margin: 0px 10px 10px 0px;
+}
+.add-sub-project {
+  margin: 0px 10px 10px 0px;
+}
 </style>
 @endsection
