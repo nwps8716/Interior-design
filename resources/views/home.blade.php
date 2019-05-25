@@ -26,8 +26,10 @@
       <div class="sidebar-heading"><a href="/home" class="list-group-item-action">室內裝潢-後台</a></div>
       <div class="list-group list-group-flush">
         <a href="/pings" class="list-group-item list-group-item-action bg-light">坪數估價</a>
-        <a href="/unitprice/engineering" class="list-group-item list-group-item-action bg-light">工程單價</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">系統單價</a>
+        <a href="/engineering/unitprice" class="list-group-item list-group-item-action bg-light">工程單價</a>
+        <a href="/system/unitprice" class="list-group-item list-group-item-action bg-light">系統單價</a>
+        <a href="/engineering/budget" class="list-group-item list-group-item-action bg-light">裝潢工程預算表</a>
+        <a href="/system/budget" class="list-group-item list-group-item-action bg-light">系統工程預算表</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
