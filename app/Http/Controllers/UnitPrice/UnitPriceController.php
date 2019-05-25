@@ -56,7 +56,7 @@ class UnitPriceController extends Controller
             ];
         }
 
-        return view('engineering', [
+        return view('unitprice/engineering', [
             'engineering' => $aEngineering,
             'sub_engineering' => $aResult
         ]);
@@ -181,6 +181,20 @@ class UnitPriceController extends Controller
         );
 
         return response()->json(['result' => true]);
+    }
+
+    /**
+     * 取得系統工程單價列表
+     *
+     * @return array
+     */
+    public function getSystemList(Request $_oRequest)
+    {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+        return view('unitprice/system');
     }
 
 }
