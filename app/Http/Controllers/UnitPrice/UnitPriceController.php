@@ -24,6 +24,11 @@ class UnitPriceController extends Controller
     {
         $aResult = [];
 
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
         ## 取得工程主項目列表
         $aEngineering = $_oEngineeringModle
             ->get()
@@ -67,6 +72,11 @@ class UnitPriceController extends Controller
         SubEngineeringModle $_oSubEngineeringModle
     )
     {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
         $iProjectID = (int) $_oRequest->input('project_id');
         $sSubProjectName = $_oRequest->input('sub_project_name');
         $iUntiPrice = (int) $_oRequest->input('unti_price');
@@ -94,6 +104,11 @@ class UnitPriceController extends Controller
         SubEngineeringModle $_oSubEngineeringModle
     )
     {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
         $iSubProjectID = (int) $_oRequest->input('id');
         $sSubProjectName = $_oRequest->input('name');
         $iUntiPrice = (int) $_oRequest->input('unti_price');
@@ -123,6 +138,11 @@ class UnitPriceController extends Controller
         SubEngineeringModle $_oSubEngineeringModle
     )
     {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
         $iSubProjectID = (int) $_oRequest->input('id');
 
         ## 刪除工程子項目
@@ -143,6 +163,11 @@ class UnitPriceController extends Controller
         EngineeringModle $_oEngineeringModle
     )
     {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
         $sProjectName = $_oRequest->input('project_name');
 
         $iLastSort = $_oEngineeringModle
