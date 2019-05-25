@@ -9,24 +9,26 @@
 @endsection
 
 @section('content')
+  <!-- 工程單價列表 -->
   <div class="row">
     <div class="col-sm-12">
+      @foreach($engineering as $id => $projectname)
+      <h4 class='project-title'>{{$projectname}}</h4>
       <table class="table table-striped">
-        @foreach($engineering as $id => $projectname)
           <span>
             <thead>
-              <tr>
-                <td>項目</td>
-                <td>單價</td>
-                <td>單位</td>
+              <tr class="subproject-title">
+                <td >項目</td>
+                <td >單價</td>
+                <td >單位</td>
                 <td colspan = 2>Actions</td>
               </tr>
             </thead>
             @foreach($sub_engineering[$id] as $sub_name)
               <tbody>
-                <td>{{$sub_name['sub_project_name']}}</td>
-                <td>{{$sub_name['unti_price']}}</td>
-                <td>{{$sub_name['unti']}}</td>
+                <td class="project-name">{{$sub_name['sub_project_name']}}</td>
+                <td class="unti_price">{{$sub_name['unti_price']}}</td>
+                <td class="unti">{{$sub_name['unti']}}</td>
                 <td>
                   <button
                     class="edit-modal btn btn-info"
@@ -48,8 +50,8 @@
               </tbody>
             @endforeach
         </span>
-        @endforeach
-      </table>
+      </table><br>
+      @endforeach
     <div>
   </div>
 
@@ -212,7 +214,16 @@
         'unti': $('#unti').val()
       },
       success: function(resp) {
-        location.reload(true);
+        swal({
+          title: "Success",
+          text: "修改成功！",
+          icon: "success",
+          buttons: false,
+          timer: 1500,
+        })
+        .then(() => {
+          location.reload(true);
+        });
       }
     });
   });
@@ -240,7 +251,16 @@
         'id': $("#sub_project_id").val()
       },
       success: function(resp) {
-        location.reload(true);
+        swal({
+          title: "Success",
+          text: "刪除成功！",
+          icon: "success",
+          buttons: false,
+          timer: 1500,
+        })
+        .then(() => {
+          location.reload(true);
+        });
       }
     });
   });
@@ -262,7 +282,16 @@
         'project_name': $("#project_name").val()
       },
       success: function(resp) {
-        location.reload(true);
+        swal({
+          title: "Success",
+          text: `新增工程項目 => ${$("#project_name").val()} 成功！`,
+          icon: "success",
+          buttons: false,
+          timer: 1500,
+        })
+        .then(() => {
+          location.reload(true);
+        });
       }
     });
   });
@@ -287,7 +316,16 @@
         'unti': $("#unitname").val()
       },
       success: function(resp) {
-        location.reload(true);
+        swal({
+          title: "Success",
+          text: `新增工程子項目 => ${$("#subproject_name").val()} 成功！`,
+          icon: "success",
+          buttons: false,
+          timer: 1500,
+        })
+        .then(() => {
+          location.reload(true);
+        });
       }
     });
   });
@@ -309,6 +347,25 @@
 }
 .add-sub-project {
   margin: 0px 10px 10px 0px;
+}
+.project-title {
+  color: white;
+  background-color: #2d76be;
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 0px;
+}
+.subproject-title {
+  background-color: #a6c7e8;
+}
+.project-name {
+  width: 50%;
+}
+.unti_price {
+  width: 15%;
+}
+.unti {
+  width: 10%;
 }
 </style>
 @endsection

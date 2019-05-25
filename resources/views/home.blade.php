@@ -75,6 +75,7 @@
   @section('script')
   <script src="{{asset('js/jquery.min.js')}}"></script>
   <script src="{{asset('js/bootstrap.bundle.min.js')}}"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   @show
 
   <!-- Menu Toggle Script -->
