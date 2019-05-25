@@ -31,6 +31,11 @@ class UnitPriceController extends Controller
             ->pluck('project_name', 'project_id')
             ->toArray();
 
+        ## 給預設Key值
+        foreach ($aEngineering as $key => $value) {
+            $aResult[$key] = [];
+        }
+
         ## 取得工程子項目列表
         $aSubEngineering = $_oSubEngineeringModle
             ->get()
@@ -152,4 +157,5 @@ class UnitPriceController extends Controller
 
         return response()->json(['result' => true]);
     }
+
 }
