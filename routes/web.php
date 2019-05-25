@@ -27,5 +27,6 @@ Route::put('/subengineering', 'UnitPrice\UnitPriceController@putSubEngineering')
 Route::delete('/subengineering', 'UnitPrice\UnitPriceController@deleteSubEngineering');
 Route::post('/engineering', 'UnitPrice\UnitPriceController@createEngineering');
 Route::get('/engineering/budget', 'Budget\BudgetController@getEngineering');
+Route::post('/engineering/budget', 'Budget\BudgetController@getEngineering');
 Route::get('/system/budget', 'Budget\BudgetController@getSystem');
 Route::get('/system/unitprice', 'UnitPrice\UnitPriceController@getSystemList');
