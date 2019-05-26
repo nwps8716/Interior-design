@@ -3,8 +3,20 @@
 @section('feature')
   <div>
       <h1 class='content-title'>工程單價列表</h1>
-      <button class="add-project btn btn-primary">新增工程分類</button>
-      <button class="add-sub-project btn btn-primary">新增工程子項目</button>
+      <button
+        id="add-project"
+        class="add-project btn btn-primary"
+        data-toggle="modal"
+        data-target="#addProject">
+          新增工程分類
+      </button>
+      <button
+        id="add-subproject"
+        class="add-sub-project btn btn-primary"
+        data-toggle="modal"
+        data-target="#addSubProject">
+          新增工程子項目
+      </button>
   </div>
 @endsection
 
@@ -31,7 +43,7 @@
                 <td class="unti">{{$sub_name['unti']}}</td>
                 <td>
                   <button
-                    class="edit-modal btn btn-info"
+                    class="edit-modal btn btn-success"
                     data-id="{{$sub_name['sub_project_id']}}"
                     data-name="{{$sub_name['sub_project_name']}}"
                     data-unti="{{$sub_name['unti']}}"
@@ -60,7 +72,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title"></h4>
+              <h5 class="modal-title"></h5>
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -88,25 +100,25 @@
               <div class="deleteContent">
                 確定要刪除 “<span class="sub_project_name"></span> ” 嗎?
               </div>
-              <div class="modal-footer">
-                <button type="button" class="btn actionBtn" data-dismiss="modal">
-                  <span id="footer_action_button" class='glyphicon'> </span>
-                </button>
-                <button type="button" class="btn btn-warning" data-dismiss="modal">
-                  <span class='glyphicon glyphicon-remove'></span> Close
-                </button>
-              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                <span class='glyphicon glyphicon-remove'></span>取消
+              </button>
+              <button type="button" class="btn actionBtn" data-dismiss="modal">
+                <span id="footer_action_button" class='glyphicon'> </span>
+              </button>
             </div>
           </div>
       </div>
   </div>
 
-  <!-- 新增工程項目分類 -->
-  <div id="addProject" class="modal fade" role="dialog">
+  <!-- 新增工程單價分類 -->
+  <div id="addProject" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addProjectLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title"></h4>
+              <h5 class="modal-title" class="addProjectLabel">新增工程單價分類</h5>
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -118,25 +130,21 @@
                   </div>
                 </div>
               </form>
-              <div class="modal-footer">
-                <button type="button" class="btn actionBtn" data-dismiss="modal">
-                  <span id="add_button" class='glyphicon'>Add</span>
-                </button>
-                <button type="button" class="btn btn-warning" data-dismiss="modal">
-                  <span class='glyphicon glyphicon-remove'></span> Close
-                </button>
-              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+              <button id="addProject-btn" type="button" class="addProject btn btn-primary">確定新增</button>
             </div>
           </div>
       </div>
   </div>
 
-  <!-- 新增工程項目 - 子項目 -->
-  <div id="addSubProject" class="modal fade" role="dialog">
+  <!-- 新增工程單價 - 子項目 -->
+  <div id="addSubProject" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addSubProjectLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title"></h4>
+              <h5 class="modal-title" class="addSubProjectLabel">新增工程單價 - 子項目</h5>
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -168,14 +176,10 @@
                   </div>
                 </div>
               </form>
-              <div class="modal-footer">
-                <button type="button" class="btn actionBtn" data-dismiss="modal">
-                  <span id="add_button" class='glyphicon'>Add</span>
-                </button>
-                <button type="button" class="btn btn-warning" data-dismiss="modal">
-                  <span class='glyphicon glyphicon-remove'></span> Close
-                </button>
-              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+              <button id="addSubProject-btn" type="button" class="addSubProject btn btn-primary">確定新增</button>
             </div>
           </div>
       </div>
@@ -187,7 +191,7 @@
 <script>
   // 觸發修改子項目Dialog
   $(document).on('click', '.edit-modal', function() {
-      $('#footer_action_button').text("Update");
+      $('#footer_action_button').text("確認修改");
       $('#footer_action_button').addClass('glyphicon-check');
       $('#footer_action_button').removeClass('glyphicon-trash');
       $('.actionBtn').addClass('btn-success');
@@ -229,7 +233,7 @@
   });
   // 觸發刪除子項目Dialog
   $(document).on('click', '.delete-modal', function() {
-      $('#footer_action_button').text("Delete");
+      $('#footer_action_button').text("確認刪除");
       $('#footer_action_button').removeClass('glyphicon-check');
       $('#footer_action_button').addClass('glyphicon-trash');
       $('.actionBtn').removeClass('btn-success');
@@ -264,16 +268,7 @@
       }
     });
   });
-  // 新增工程項目分類 Dialog
-  $(document).on('click', '.add-project', function() {
-      $('#add_button').addClass('glyphicon-trash');
-      $('.actionBtn').addClass('btn-success');
-      $('.actionBtn').addClass('addProject');
-      $('.modal-title').text('新增工程項目分類');
-      $('.form-horizontal').show();
-      $('#addProject').modal('show');
-  });
-  // 新增工程項目分類
+  // 新增工程單價分類
   $('.modal-footer').on('click', '.addProject', function() {
     $.ajax({
       type: 'post',
@@ -295,16 +290,7 @@
       }
     });
   });
-  // 新增工程項目 - 子項目 Dialog
-  $(document).on('click', '.add-sub-project', function() {
-      $('#add_button').addClass('glyphicon-trash');
-      $('.actionBtn').addClass('btn-success');
-      $('.actionBtn').addClass('addSubProject');
-      $('.modal-title').text('新增工程項目 - 子項目');
-      $('.form-horizontal').show();
-      $('#addSubProject').modal('show');
-  });
-  // 新增工程項目 - 子項目
+  // 新增工程單價 - 子項目
   $('.modal-footer').on('click', '.addSubProject', function() {
     $.ajax({
       type: 'post',
