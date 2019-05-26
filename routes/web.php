@@ -20,7 +20,6 @@ Route::post('/login', 'User\UserController@postLogin');
 Route::get('/logout', 'User\UserController@getLogout');
 Route::get('/adduser', 'User\UserController@getCreateUser');
 Route::post('/user/create', 'User\UserController@createUser');
-Route::get('/pings', 'Pings\PingsController@index');
 Route::get('/engineering/unitprice', 'UnitPrice\UnitPriceController@getEngineeringList');
 Route::post('/subengineering', 'UnitPrice\UnitPriceController@createSubEngineering');
 Route::put('/subengineering', 'UnitPrice\UnitPriceController@putSubEngineering');
@@ -30,3 +29,6 @@ Route::get('/engineering/budget', 'Budget\BudgetController@getEngineering');
 Route::post('/engineering/budget', 'Budget\BudgetController@getEngineering');
 Route::get('/system/budget', 'Budget\BudgetController@getSystem');
 Route::get('/system/unitprice', 'UnitPrice\UnitPriceController@getSystemList');
+## 坪數估價
+Route::get('/pings', 'Pings\PingsController@index');
+Route::put('/pings/percent', 'Pings\PingsController@editPercent');
