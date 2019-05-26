@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pings;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Model\Pings\Pings As PingsModle;
 use Alert;
 
 class PingsController extends Controller
@@ -17,11 +18,11 @@ class PingsController extends Controller
         6 => 'F'
     ];
     /**
-     * 主頁面
+     * 坪數估價主頁面
      *
      * @return boolean
      */
-    public function index(Request $_oRequest)
+    public function index(Request $_oRequest, PingsModle $_oPingsModle)
     {
         if (!$_oRequest->session()->has('login_user_info')){
             toast('使用者已被登出！！','error','top-right');
@@ -30,9 +31,16 @@ class PingsController extends Controller
 
         $aData = [];
         $iDefault_pings = (int) $_oRequest->input('pings', 20); ## 坪數
-        $iEngineering_budget = 45; ## 工程預算
-        $iSystem_budget = 100 - $iEngineering_budget; ## 系統預算
-
+        $aE_budget = $_oPingsModle->where('name', '工程預算')->get()->toArray();
+        $aS_budget = $_oPingsModle->where('name', '系統預算')->get()->toArray();
+        if (empty($aE_budget) || empty($aS_budget)) {
+            $iEngineering_budget = 45; ## 工程預算
+            $iSystem_budget = 55; ## 系統預算
+        } else {
+            $iEngineering_budget = $aE_budget[0]['percent'];
+            $iSystem_budget = $aS_budget[0]['percent'];
+        }
+        
         foreach ($this->level as $key => $level_name) {
             $aData[$key]['pings'] = $iDefault_pings;
             $aData[$key]['level'] = $level_name;
@@ -50,8 +58,28 @@ class PingsController extends Controller
         return view('pings', [
             'default_pings' => $iDefault_pings,
             'main_data' => $aData,
+            'engineering_budget' => $iEngineering_budget,
+            'system_budget' => $iSystem_budget
         ]);
     }
+    ## 修改系統預算、工程預算
+    public function editPercent(Request $_oRequest, PingsModle $_oPingsModle)
+    {
+        $iEngineering_budget = (int) $_oRequest->input('engineering_budget');
+        $iSystem_budget = (int) $_oRequest->input('system_budget');
+
+        $_oPingsModle->updateOrCreate(
+            ['name' => '工程預算'], 
+            ['id' => 1, 'name' => '工程預算', 'percent' => $iEngineering_budget]
+        );
+        $_oPingsModle->updateOrCreate(
+            ['name' => '系統預算'], 
+            ['id' => 2, 'name' => '系統預算', 'percent' => $iSystem_budget]
+        );
+        
+        return response()->json(['result' => true]);
+    }
+
     ## 使用系統售價來計算系統牌價、系統折數
     private function countSystemCardAndDiscount($iSystemPrice)
     {

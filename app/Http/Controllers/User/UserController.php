@@ -42,11 +42,11 @@ class UserController extends Controller
         $aUserList = $_oUserModel
             ->where('user_name', $sUserName)
             ->get()
-            ->toArray()[0];
+            ->toArray();
 
         ## 判斷如果無使用者
         if (empty($aUserList) ||
-            !(Hash::check($sPassword, $aUserList['password']))) {
+            !(Hash::check($sPassword, $aUserList[0]['password']))) {
             toast('帳號or密碼錯誤，請重新登入','error','top-right');
             return redirect()->back();
         }
@@ -56,7 +56,7 @@ class UserController extends Controller
             'login_user_info',
             [
                 'user_name' => $sUserName,
-                'level' => $aUserList['level'],
+                'level' => $aUserList[0]['level'],
             ]
         );
 
