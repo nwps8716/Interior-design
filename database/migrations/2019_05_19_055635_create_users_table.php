@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('user_name', 32)->comment('使用者帳號');
             $table->string('password', 255)->comment('使用者密碼');
             $table->unsignedInteger('level')->default(3)->comment('使用者層級');
+            $table->smallInteger('pings')->default(20)->comment('使用者設定坪數');
         });
     }
 

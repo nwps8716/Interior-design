@@ -16,7 +16,7 @@ class CreatePingsTable extends Migration
         Schema::create('pings', function (Blueprint $table) {
             $table->tinyInteger('id')->unique()->comment('項目ID');
             $table->char('name', 4)->comment('項目名稱');
-            $table->tinyInteger('percent')->comment('%數');
+            $table->smallInteger('numerical_value')->comment('坪數價錢和預算％數');
         });
     }
 }

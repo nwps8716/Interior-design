@@ -11,13 +11,10 @@ class User extends Model
         'user_name',
         'password',
         'level',
+        'pings',
     ];
 
     protected $table = 'users';
     protected $primaryKey = 'user_id';
-   
-    public function user()
-    {
-        return $this->belongsTo('App\Model\User\User');
-    }
+    public $timestamps = false;
 }

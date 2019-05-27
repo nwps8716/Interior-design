@@ -9,7 +9,7 @@ class Pings extends Model
     protected $fillable = [
         'id',
         'name',
-        'percent',
+        'numerical_value',
     ];
 
     protected $table = 'pings';
