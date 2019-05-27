@@ -14,4 +14,5 @@ class Engineering extends Model
 
     protected $table = 'engineering';
     protected $primaryKey = 'project_id';
+    public $timestamps = false;
 }
