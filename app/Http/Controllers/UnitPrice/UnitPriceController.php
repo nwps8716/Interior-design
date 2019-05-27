@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Model\UnitPrice\Engineering As EngineeringModle;
 use App\Model\UnitPrice\SubEngineering As SubEngineeringModle;
+use App\Model\UnitPrice\System As SystemModle;
+use App\Model\UnitPrice\SubSystem As SubSystemModle;
 use Alert;
 use Response;
 
@@ -253,13 +255,112 @@ class UnitPriceController extends Controller
      *
      * @return array
      */
-    public function getSystemList(Request $_oRequest)
+    public function getSystemList(
+        Request $_oRequest,
+        SystemModle $_oSystemModle,
+        SubSystemModle $_oSubSystemModle
+    )
     {
         ## 判斷使用者權限
         if ($this->checkSession($_oRequest, false) !== 'success') {
             return redirect($this->checkSession($_oRequest, false));
         }
-        return view('unitprice/system');
+
+        ## 取得系統主項目列表
+        $aSystem = $_oSystemModle
+            ->get()
+            ->sortBy('sort')
+            ->pluck('system_name', 'system_id')
+            ->toArray();
+
+        ## 給預設Key值
+        foreach ($aSystem as $key => $value) {
+            $aResult[$key] = [];
+        }
+
+        ## 取得系統子項目列表
+        $aSubSystem = $_oSubSystemModle
+            ->get()
+            ->toArray();
+
+        ## 整理資料
+        foreach ($aSubSystem as $iKey => $aValue) {
+            $aResult[$aValue['system_id']][] = [
+                'sub_system_id' => $aValue['sub_system_id'],
+                'sub_system_name' => $aValue['sub_system_name'],
+                'format' => $aValue['format'],
+                'unti_price' => $aValue['unti_price'],
+                'unti' => $aValue['unti']
+            ];
+        }
+        
+        return view('unitprice/system', [
+            'system' => $aSystem,
+            'sub_system' => $aResult
+        ]);
     }
 
+    /**
+     * 新增系統單價項目分類
+     *
+     * @return array
+     */
+    public function createSystem(
+        Request $_oRequest,
+        SystemModle $_oSystemModle
+    )
+    {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
+        $sSystemName = $_oRequest->input('system_name');
+
+        $iLastSort = $_oSystemModle
+            ->max('sort');
+
+        $bResult = $_oSystemModle->insert(
+            [
+                'system_name' => $sSystemName,
+                'sort' => ($iLastSort + 1)
+            ]
+        );
+
+        return response()->json(['result' => true]);
+    }
+
+    /**
+     * 新增系統單價子項目內容
+     *
+     * @return array
+     */
+    public function createSubSystem(
+        Request $_oRequest,
+        SubSystemModle $_oSubSystemModle
+    )
+    {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
+        $iSystemID = (int) $_oRequest->input('system_id');
+        $sSubSystemName = $_oRequest->input('sub_system_name');
+        $sFormat = $_oRequest->input('format');
+        $iUntiPrice = (int) $_oRequest->input('unti_price');
+        $sUnti = $_oRequest->input('unti');
+
+        $bResult = $_oSubSystemModle->insert(
+            [
+                'sub_system_name' => $sSubSystemName,
+                'system_id' => $iSystemID,
+                'format' => $sFormat,
+                'unti_price' => $iUntiPrice,
+                'unti' => $sUnti
+            ]
+        );
+
+        return response()->json(['result' => true]);
+    }
 }
