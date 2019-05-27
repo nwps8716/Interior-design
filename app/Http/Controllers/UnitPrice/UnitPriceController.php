@@ -184,6 +184,71 @@ class UnitPriceController extends Controller
     }
 
     /**
+     * 刪除工程分類項目
+     *
+     * @return array
+     */
+    public function deleteEngineering(
+        Request $_oRequest,
+        EngineeringModle $_oEngineeringModle,
+        SubEngineeringModle $_oSubEngineeringModle
+    )
+    {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
+        $iProjectID = (int) $_oRequest->input('id');
+
+        ## 取得工程大類底下是否還有子項目
+        $iSubProjectCount = $_oSubEngineeringModle
+            ->where('project_id', $iProjectID)
+            ->count();
+
+        if ($iSubProjectCount > 0) {
+            return response()->json(['result' => false]);
+        }
+
+        ## 刪除工程分類項目
+        $bResult = $_oEngineeringModle
+            ->where('project_id', $iProjectID)
+            ->delete();
+
+        return response()->json(['result' => true]);
+    }
+
+    /**
+     * 修改工程分類項目
+     *
+     * @return array
+     */
+    public function putEngineering(
+        Request $_oRequest,
+        EngineeringModle $_oEngineeringModle
+    )
+    {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
+        $iProjectID = (int) $_oRequest->input('id');
+        $sProjectName = $_oRequest->input('name');
+
+        ## 更新工程分類項目名稱
+        $bResult = $_oEngineeringModle
+            ->where('project_id', $iProjectID)
+            ->update(
+                [
+                    'project_name' => $sProjectName,
+                ]
+            );
+
+        return response()->json(['result' => true]);
+    }
+
+    /**
      * 取得系統工程單價列表
      *
      * @return array

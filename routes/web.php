@@ -23,6 +23,8 @@ Route::post('/user/create', 'User\UserController@createUser');
 ## 工程單價
 Route::get('/engineering/unitprice', 'UnitPrice\UnitPriceController@getEngineeringList');
 Route::post('/engineering', 'UnitPrice\UnitPriceController@createEngineering');
+Route::put('/engineering', 'UnitPrice\UnitPriceController@putEngineering');
+Route::delete('/engineering', 'UnitPrice\UnitPriceController@deleteEngineering');
 Route::post('/subengineering', 'UnitPrice\UnitPriceController@createSubEngineering');
 Route::put('/subengineering', 'UnitPrice\UnitPriceController@putSubEngineering');
 Route::delete('/subengineering', 'UnitPrice\UnitPriceController@deleteSubEngineering');

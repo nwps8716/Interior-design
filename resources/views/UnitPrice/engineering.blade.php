@@ -17,6 +17,20 @@
         data-target="#addSubProject">
           新增工程子項目
       </button>
+      <button
+        id="project-set"
+        class="project-set btn btn-success"
+        data-toggle="modal"
+        data-target="#projectSet">
+          工程分類設定
+      </button>
+      <button
+        id="project-delete"
+        class="project-delete btn btn-danger"
+        data-toggle="modal"
+        data-target="#projectDelete">
+          刪除工程分類
+      </button>
   </div>
 @endsection
 
@@ -184,6 +198,66 @@
           </div>
       </div>
   </div>
+
+  <!-- 工程分類設定 -->
+  <div id="projectSet" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="projectSetLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" class="projectSetLabel">工程分類設定</h5>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <div class="edit-project-div">
+                <div style="margin-bottom: 6px;">
+                  選擇工程分類:
+                  <select class="edit-project-select">
+                    @foreach($engineering as $id => $projectname)
+                      <option value="{{$id}}">{{$projectname}}</option>
+                    @endforeach
+                  </select>
+                </div>
+                <div style="margin-bottom: 6px;">
+                  預修改名稱:
+                  <input type="text" class="edit-project-name" id="edit-project-name">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button id="edit-project-btn" type="button" class="editProject btn btn-success">確定修改</button>
+              </div>
+            </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- 刪除工程分類 -->
+  <div id="projectDelete" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="projectDeleteLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" class="projectDeleteLabel">刪除工程分類</h5>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <div class="delete-project-div">
+                <div style="margin-bottom: 6px;">
+                  選擇預刪除工程分類:
+                  <select class="delete-project-select">
+                    @foreach($engineering as $id => $projectname)
+                      <option value="{{$id}}"><span class="delete-name">{{$projectname}}</span></option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button id="delete-project-btn" type="button" class="deleteProject btn btn-danger">確認刪除</button>
+              </div>
+            </div>
+          </div>
+      </div>
+  </div>
 @endsection
 
 @section('script')
@@ -315,6 +389,63 @@
       }
     });
   });
+  // 修改工程分類項目
+  $('.modal-footer').on('click', '.editProject', function() {
+    console.log('防護/垃圾清運V2');
+    console.log($(".edit-project-name").val());
+    $.ajax({
+      type: 'put',
+      url: '/engineering',
+      data: {
+        'id': $(".edit-project-select").val(),
+        'name': $(".edit-project-name").val(),
+      },
+      success: function(resp) {
+        swal({
+          title: "Success",
+          text: `修改成功！`,
+          icon: "success",
+          buttons: false,
+          timer: 1500,
+        })
+        .then(() => {
+          location.reload(true);
+        });
+      }
+    });
+  });
+  // 刪除工程分類項目
+  $('.modal-footer').on('click', '.deleteProject', function() {
+    $.ajax({
+      type: 'delete',
+      url: '/engineering',
+      data: {
+        'id': $(".delete-project-select").val()
+      },
+      success: function(resp) {
+        if (resp.result === false) {
+          swal({
+            title: "Error",
+            text: `該工程大類底下還有子項目，無法刪除！！`,
+            icon: "error",
+            buttons: false,
+            timer: 2000,
+          })
+        } else {
+          swal({
+            title: "Success",
+            text: `刪除成功！`,
+            icon: "success",
+            buttons: false,
+            timer: 1500,
+          })
+          .then(() => {
+            location.reload(true);
+          });
+        }
+      }
+    });
+  });
 </script>
 @endsection
 
@@ -332,6 +463,12 @@
   margin: 0px 10px 10px 0px;
 }
 .add-sub-project {
+  margin: 0px 10px 10px 0px;
+}
+.project-set {
+  margin: 0px 10px 10px 0px;
+}
+.project-delete {
   margin: 0px 10px 10px 0px;
 }
 .project-title {
@@ -352,6 +489,15 @@
 }
 .unti {
   width: 10%;
+}
+.edit-project-name {
+  width: 50%;
+}
+.editProject {
+  margin: 0px 0px 0px 10px;
+}
+.deleteProject {
+  margin: 0px 0px 0px 10px;
 }
 </style>
 @endsection

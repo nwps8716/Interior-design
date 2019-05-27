@@ -258,5 +258,8 @@
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
+.subproject-num {
+  border-radius: 6px;
+}
 </style>
 @endsection
