@@ -32,9 +32,12 @@ Route::delete('/subengineering', 'UnitPrice\UnitPriceController@deleteSubEnginee
 Route::get('/engineering/budget', 'Budget\BudgetController@getEngineering');
 Route::put('/engineering/budget/{budget_id}', 'Budget\BudgetController@putUserEngineering');
 Route::delete('/engineering/budget/{budget_id}', 'Budget\BudgetController@deleteUserEngineering');
+## 系統單價
+Route::get('/system/unitprice', 'UnitPrice\UnitPriceController@getSystemList');
+Route::post('/system', 'UnitPrice\UnitPriceController@createSystem');
+Route::post('/subsystem', 'UnitPrice\UnitPriceController@createSubSystem');
 ## 系統預算
 Route::get('/system/budget', 'Budget\BudgetController@getSystem');
-Route::get('/system/unitprice', 'UnitPrice\UnitPriceController@getSystemList');
 ## 坪數估價
 Route::get('/pings', 'Pings\PingsController@index');
 Route::put('/pings/percent', 'Pings\PingsController@editPercent');
