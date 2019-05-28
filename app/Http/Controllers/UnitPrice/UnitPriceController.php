@@ -261,6 +261,7 @@ class UnitPriceController extends Controller
         SubSystemModle $_oSubSystemModle
     )
     {
+        $aResult = [];
         ## 判斷使用者權限
         if ($this->checkSession($_oRequest, false) !== 'success') {
             return redirect($this->checkSession($_oRequest, false));
@@ -272,7 +273,7 @@ class UnitPriceController extends Controller
             ->sortBy('sort')
             ->pluck('system_name', 'system_id')
             ->toArray();
-
+        
         ## 給預設Key值
         foreach ($aSystem as $key => $value) {
             $aResult[$key] = [];
@@ -289,8 +290,8 @@ class UnitPriceController extends Controller
                 'sub_system_id' => $aValue['sub_system_id'],
                 'sub_system_name' => $aValue['sub_system_name'],
                 'format' => $aValue['format'],
-                'unti_price' => $aValue['unti_price'],
-                'unti' => $aValue['unti']
+                'unit_price' => $aValue['unit_price'],
+                'unit' => $aValue['unit']
             ];
         }
         
@@ -348,18 +349,79 @@ class UnitPriceController extends Controller
         $iSystemID = (int) $_oRequest->input('system_id');
         $sSubSystemName = $_oRequest->input('sub_system_name');
         $sFormat = $_oRequest->input('format');
-        $iUntiPrice = (int) $_oRequest->input('unti_price');
-        $sUnti = $_oRequest->input('unti');
+        $iUnitPrice = (int) $_oRequest->input('unit_price');
+        $sUnit = $_oRequest->input('unit');
 
         $bResult = $_oSubSystemModle->insert(
             [
                 'sub_system_name' => $sSubSystemName,
                 'system_id' => $iSystemID,
                 'format' => $sFormat,
-                'unti_price' => $iUntiPrice,
-                'unti' => $sUnti
+                'unit_price' => $iUnitPrice,
+                'unit' => $sUnit
             ]
         );
+
+        return response()->json(['result' => true]);
+    }
+
+    /**
+     * 刪除系統單價子項目內容
+     *
+     * @return array
+     */
+    public function deleteSubSystem(
+        Request $_oRequest,
+        SubSystemModle $_oSubSystemModle
+    )
+    {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
+        $iSubSystemID = (int) $_oRequest->input('id');
+
+        ## 刪除工程子項目
+        $bResult = $_oSubSystemModle
+            ->where('sub_system_id', $iSubSystemID)
+            ->delete();
+
+        return response()->json(['result' => true]);
+    }
+
+    /**
+     * 更新系統子項目內容
+     *
+     * @return array
+     */
+    public function putSubSystem(
+        Request $_oRequest,
+        SubSystemModle $_oSubSystemModle
+    )
+    {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+        
+        $iSubSystemID = (int) $_oRequest->input('id');
+        $sSubSystemName = $_oRequest->input('name');
+        $sFormat = $_oRequest->input('format');
+        $iUnitPrice = (int) $_oRequest->input('unit_price');
+        $sUnit = $_oRequest->input('unit');
+
+        ## 更新工程子項目
+        $bResult = $_oSubSystemModle
+            ->where('sub_system_id', $iSubSystemID)
+            ->update(
+                [
+                    'sub_system_name' => $sSubSystemName,
+                    'format' => $sFormat,
+                    'unit_price' => $iUnitPrice,
+                    'unit' => $sUnit,
+                ]
+            );
 
         return response()->json(['result' => true]);
     }
