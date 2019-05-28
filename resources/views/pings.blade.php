@@ -3,7 +3,8 @@
 @section('feature')
   <div class="pings-title">
     <h1 class='content-title'>坪數估價</h1>
-    <button id="edit-enginner" type="button" class="system-btn btn btn-primary" data-toggle="modal" data-target="#exampleModal">工程、系統預算修改</button>
+    <button id="edit-enginner" type="button" class="system-btn btn btn-primary" data-toggle="modal" data-target="#exampleModal">級距坪數價格、預算％數設定</button>
+    <button id="pings-set" type="button" class="pings-set-btn btn btn-primary">儲存當前試算坪數</button>
   </div>
   <table class="table table-bordered table-striped pings-table">
     <thead class="thead-dark">
@@ -36,19 +37,24 @@
       @endforeach
     </tbody>
   </table>
-  <!-- Dialog Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+  <!-- 級距坪數價格、預算％數設定 -->
+  <div id="exampleModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">修改工程預算、系統預算％數</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <h5 class="modal-title" id="exampleModalLabel">級距坪數價格、預算％數設定</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
           <div style="margin-bottom: 6px;">工程預算: <input id="engineering_budget" value="{{ $engineering_budget }}" type="number" min="0" max="100"/> %</div>
-          <div>系統預算: <input id="system_budget" value="{{ $system_budget }}" type="number" min="0" max="100"/> %</div>
+          <div>系統預算: <input name="system_budget" id="system_budget" value="{{ $system_budget }}" type="number" min="0" max="100"/> %</div>
+          <hr>
+          @foreach($level_data as $level => $level_detail)
+            <div>
+              {{ $level_detail['level_name'] }}:
+              <input class="level-input" id="level_{{$level}}" value="{{ $level_detail['pings_price'] }}" type="number"/>
+            </div>
+          @endforeach
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
@@ -56,7 +62,7 @@
         </div>
       </div>
     </div>
-  <div>
+  </div>
 @endsection
 
 @section('script')
@@ -98,17 +104,22 @@
       this.value = 1;
     }
     setTimeout(function () {
-      window.location.href = window.location.origin + '/pings?pings=' + $("#pings-number").val();
+      window.location.href = window.location.origin + '/pings/' + $("#pings-number").val() + '/trial/amount';
     }, 100);
   });
   // 修改工程預算、系統預算
   $('#edit-confirm').on('click', function() {
+    var level_price = [];
+    for (var i = 1; i < 7; i += 1) {
+      level_price[i] = $('#level_' + i).val();
+    }
     $.ajax({
       type: 'put',
       url: '/pings/percent',
       data: {
         'engineering_budget': $("#engineering_budget").val(),
         'system_budget': $('#system_budget').val(),
+        'level_price': level_price,
       },
       success: function(resp) {
         swal({
@@ -124,6 +135,41 @@
       }
     });
   });
+  // 儲存使用者當前試算坪數
+  $('#pings-set').on('click', function() {
+    var pings_num = $("#pings-number").val();
+    if (pings_num === '') {
+      swal({
+        title: "Error",
+        text: "請輸入有效的數字",
+        icon: "error",
+        buttons: false,
+        timer: 1500,
+      });
+    } else {
+      $.ajax({
+        type: 'put',
+        url: '/user/pings',
+        data: {
+          'pings': pings_num
+        },
+        success: function(resp) {
+          swal({
+            title: "Success",
+            text: "設定成功！",
+            icon: "success",
+            buttons: false,
+            timer: 1500,
+          })
+          .then(() => {
+            setTimeout(function () {
+              window.location.href = window.location.origin + '/pings';
+            }, 100);
+          });
+        }
+      });
+    }
+  });
 </script>
 @endsection
 
@@ -137,6 +183,9 @@
     position: absolute;
     top: 13px;
     left: 160px;
+  }
+  .pings-set-btn {
+    margin: 0px 10px 10px 0px;
   }
   .pings-table,
   .level {
@@ -152,6 +201,9 @@
   }
   input {
     border-radius: 6px;
+  }
+  .level-input{
+    margin-top: 6px;
   }
 </style>
 @endsection

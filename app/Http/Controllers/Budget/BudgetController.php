@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Budget;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Model\Pings\Pings As PingsModle;
+use App\Model\User\User As UserModle;
 use App\Model\UnitPrice\Engineering As EngineeringModle;
 use App\Model\UnitPrice\SubEngineering As SubEngineeringModle;
 use App\Model\User\UserBudget As UserBudgetModle;
@@ -31,13 +33,13 @@ class BudgetController extends Controller
         Request $_oRequest,
         EngineeringModle $_oEngineeringModle,
         SubEngineeringModle $_oSubEngineeringModle,
-        UserBudgetModle $_oUserBudgetModle
+        UserBudgetModle $_oUserBudgetModle,
+        PingsModle $_oPingsModle,
+        UserModle $_oUserModle
     )
     {
         $aResult = $aEngineeringList = $aUserBudget = [];
-        $iSubTotal = 0;
-        ## 測試數量
-        $iTestTotal = 100000;
+        $iSubTotal = $iAmount = 0;
 
         $iBudget = (int) $_oRequest->input('budget', 1);
 
@@ -48,6 +50,14 @@ class BudgetController extends Controller
 
         ## 使用者登入資訊
         $aUserInfo = $_oRequest->session()->get('login_user_info');
+
+        ## 取得使用者級距
+        $iAmount = $this->getUserLevelPingsAmount(
+            $_oPingsModle,
+            $_oUserModle,
+            $aUserInfo['user_name'],
+            $iBudget
+        );
 
         ## 取得工程主項目列表
         $aEngineering = $_oEngineeringModle
@@ -100,9 +110,9 @@ class BudgetController extends Controller
 
         ## 總預算資料
         $aTotalData = [
-            'total' => $iTestTotal,
+            'total' => $iAmount,
             'sub_total' => $iSubTotal,
-            'remaining_money' => ($iTestTotal - $iSubTotal),
+            'remaining_money' => ($iAmount - $iSubTotal),
         ];
 
         return view('budget/engineering', [
@@ -188,5 +198,41 @@ class BudgetController extends Controller
         return view('budget/system', [
             'spacing' => $this->aSpacing
         ]);
+    }
+
+    ## ========================= 共用Function =========================##
+    /**
+     * 取得使用者級距坪數總預算
+     * @param string $_sUserName 使用者登入名稱
+     * @param int    $_iLevel    工程級距ID
+     * @return int
+     */
+    private function getUserLevelPingsAmount(
+        PingsModle $_oPingsModle,
+        UserModle $_oUserModle,
+        $_sUserName,
+        $_iLevel
+    )
+    {
+        $iAmount = 0;
+
+        $iUserPings = $_oUserModle
+            ->where('user_name', $_sUserName)
+            ->value('pings');
+
+        ## 取得坪數相關設定
+        $aPings = $_oPingsModle
+            ->get()
+            ->pluck('numerical_value', 'name')
+            ->toArray();
+
+        $sLevelName = $this->aSpacing[$_iLevel] . '級工程';
+        ## 取得該坪數的每坪金額
+        $iLevelAmount = $aPings[$sLevelName];
+
+        ## 計算總預算
+        $iAmount = $iLevelAmount * $iUserPings;
+
+        return $iAmount;
     }
 }

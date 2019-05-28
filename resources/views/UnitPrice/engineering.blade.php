@@ -136,7 +136,7 @@
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-              <form class="form-horizontal" role="form">
+              <form class="add-project-form" role="form">
                 <div class="form-group">
                   <label class="control-label col-sm-4" for="project_name">工程分類名稱:</label>
                   <div class="col-sm-10">
@@ -162,7 +162,7 @@
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-              <form class="form-horizontal" role="form">
+              <form class="add-sub-form" role="form">
                 <div class="form-group">
                   <label class="control-label col-sm-10" for="project_name">請選擇要新增在哪個工程項目大類底下:</label>
                   <select class="select-engineering">
@@ -268,8 +268,9 @@
       $('#footer_action_button').text("確認修改");
       $('#footer_action_button').addClass('glyphicon-check');
       $('#footer_action_button').removeClass('glyphicon-trash');
-      $('.actionBtn').addClass('btn-success');
       $('.actionBtn').removeClass('btn-danger');
+      $('.actionBtn').removeClass('delete');
+      $('.actionBtn').addClass('btn-success');
       $('.actionBtn').addClass('edit');
       $('.modal-title').text($(this).data('projectname'));
       $('.form-horizontal').show();
@@ -308,9 +309,10 @@
   // 觸發刪除子項目Dialog
   $(document).on('click', '.delete-modal', function() {
       $('#footer_action_button').text("確認刪除");
-      $('#footer_action_button').removeClass('glyphicon-check');
-      $('#footer_action_button').addClass('glyphicon-trash');
+      $('#footer_action_button').addClass('glyphicon-check');
+      $('#footer_action_button').removeClass('glyphicon-trash');
       $('.actionBtn').removeClass('btn-success');
+      $('.actionBtn').removeClass('edit');
       $('.actionBtn').addClass('btn-danger');
       $('.actionBtn').addClass('delete');
       $('.modal-title').text($(this).data('projectname'));
@@ -343,7 +345,7 @@
     });
   });
   // 新增工程單價分類
-  $('.modal-footer').on('click', '.addProject', function() {
+  $('.modal-footer').on('click', '#addProject-btn', function() {
     $.ajax({
       type: 'post',
       url: '/engineering',
@@ -365,7 +367,7 @@
     });
   });
   // 新增工程單價 - 子項目
-  $('.modal-footer').on('click', '.addSubProject', function() {
+  $('.modal-footer').on('click', '#addSubProject-btn', function() {
     $.ajax({
       type: 'post',
       url: '/subengineering',
@@ -390,7 +392,7 @@
     });
   });
   // 修改工程分類項目
-  $('.modal-footer').on('click', '.editProject', function() {
+  $('.modal-footer').on('click', '#edit-project-btn', function() {
     console.log('防護/垃圾清運V2');
     console.log($(".edit-project-name").val());
     $.ajax({
@@ -415,7 +417,7 @@
     });
   });
   // 刪除工程分類項目
-  $('.modal-footer').on('click', '.deleteProject', function() {
+  $('.modal-footer').on('click', '#delete-project-btn', function() {
     $.ajax({
       type: 'delete',
       url: '/engineering',

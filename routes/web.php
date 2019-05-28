@@ -40,4 +40,6 @@ Route::post('/subsystem', 'UnitPrice\UnitPriceController@createSubSystem');
 Route::get('/system/budget', 'Budget\BudgetController@getSystem');
 ## 坪數估價
 Route::get('/pings', 'Pings\PingsController@index');
+Route::get('/pings/{pings}/trial/amount', 'Pings\PingsController@getTrialAmount');
 Route::put('/pings/percent', 'Pings\PingsController@editPercent');
+Route::put('/user/pings', 'Pings\PingsController@editUserPings');
