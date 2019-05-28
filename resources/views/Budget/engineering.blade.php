@@ -186,7 +186,7 @@
     }
   });
   // 還原使用者該級距的數量設定
-  $('#resetBudget').on('click', function() {
+  $('#resetBudget-btn').on('click', function() {
     var budget_id = $(".budget").val();
     $.ajax({
         type: 'delete',
