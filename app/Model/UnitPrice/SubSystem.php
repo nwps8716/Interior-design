@@ -10,8 +10,8 @@ class SubSystem extends Model
         'sub_system_id',
         'sub_system_name',
         'format',
-        'unti_price',
-        'unti',
+        'unit_price',
+        'unit',
         'system_id',
     ];
     protected $table = 'sub_system';

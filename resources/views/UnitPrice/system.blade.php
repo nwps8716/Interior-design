@@ -38,27 +38,31 @@
               <tbody>
                 <td class="system-name">{{$sub_name['sub_system_name']}}</td>
                 <td class="format">{{$sub_name['format']}}</td>
-                <td class="unti_price">{{$sub_name['unti_price']}}</td>
-                <td class="unti">{{$sub_name['unti']}}</td>
+                <td class="unit_price">{{$sub_name['unit_price']}}</td>
+                <td class="unit">{{$sub_name['unit']}}</td>
                 <td>
                   <button
+                    id="edit-sub"
                     class="edit-modal btn btn-success"
                     data-id="{{$sub_name['sub_system_id']}}"
                     data-name="{{$sub_name['sub_system_name']}}"
                     data-format="{{$sub_name['format']}}"
-                    data-unti="{{$sub_name['unti']}}"
-                    data-untiprice="{{$sub_name['unti_price']}}"
-                    data-systemname="{{$systemname}}">
-                      <span class="glyphicon glyphicon-edit">Edit</span>
+                    data-unit="{{$sub_name['unit']}}"
+                    data-unitprice="{{$sub_name['unit_price']}}"
+                    data-systemname="{{$systemname}}"
+                    data-toggle="modal"
+                    data-target="#editSubSystem">
+                      <span class="glyphicon glyphicon-edit">修改</span>
                   </button>
                   <button
+                    id="delete-sub"
                     class="delete-modal btn btn-danger"
                     data-id="{{$sub_name['sub_system_id']}}"
                     data-name="{{$sub_name['sub_system_name']}}"
                     data-systemname="{{$systemname}}"
                     data-toggle="modal"
                     data-target="#delSubSystem">
-                      <span class="glyphicon glyphicon-trash">Delete</span>
+                      <span class="glyphicon glyphicon-trash">刪除</span>
                   </button>
                 </td>
               </tbody>
@@ -68,27 +72,76 @@
       @endforeach
     <div>
   </div>
-  <!-- 刪除 dialog -->
-  <div id="delSubSystem" class="modal fade" tabindex="-1" role="dialog">
-      <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="del-title">系統分類: </h5>
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-              <form class="form-horizontal" role="form">
-                <div class="form-group">
-                  <label class="control-label" id="del-content" for="system_name">內容物: </label>
-                </div>
-              </form>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-              <button id="delSubSystem-btn" type="button" class="btn btn-danger">確定刪除</button>
-            </div>
+  <!-- 修改子項目Dialog -->
+  <div id="editSubSystem" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="edit-subsystem-title"></h5>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
           </div>
-      </div>
+          <div class="modal-body">
+            <form class="form-horizontal" role="form">
+              <div class="form-group">
+                <label class="control-label col-sm-4" for="sub_system_name">內容物:</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="sub_system_name">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-sm-4" for="edit-format">規格:</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="edit-format">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-sm-2" for="unit_price">單價:</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="unit_price">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-sm-2">單位:</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="unit">
+                </div>
+              </div>
+              <input type="hidden" class="form-control" id="edit-sub-id">
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+              <span class='glyphicon glyphicon-remove'>取消</span>
+            </button>
+            <button type="button" class="btn actionBtn btn-success" data-dismiss="modal">
+              <span id="editSubSystem-btn" class='glyphicon'>確定修改</span>
+            </button>
+          </div>
+        </div>
+    </div>
+  </div>
+  <!-- 刪除子項目 dialog -->
+  <div id="delSubSystem" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="del-sub-title"></h5>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal" role="form">
+              <div class="form-group">
+                <label class="control-label" id="del-sub-content" for="system_name"></label>
+              </div>
+            </form>
+          </div>
+          <input type="hidden" class="form-control" id="del-sub-id">
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button id="delSubSystem-btn" type="button" class="btn btn-danger">確定刪除</button>
+          </div>
+        </div>
+    </div>
   </div>
   <!-- 新增系統單價分類 -->
   <div id="addSystem" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addSystemLabel" aria-hidden="true">
@@ -146,9 +199,9 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="control-label col-sm-4" for="untiprice">單價:</label>
+                  <label class="control-label col-sm-4" for="unitprice">單價:</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" id="untiprice">
+                    <input type="text" class="form-control" id="unitprice">
                   </div>
                 </div>
                 <div class="form-group">
@@ -205,13 +258,13 @@
         'system_id': $(".select-system").val(),
         'sub_system_name': $("#subsystem_name").val(),
         'format': $("#format").val(),
-        'unti_price': $("#untiprice").val(),
-        'unti': $("#unitname").val()
+        'unit_price': $("#unitprice").val(),
+        'unit': $("#unitname").val()
       },
       success: function(resp) {
         swal({
           title: "Success",
-          text: `新增工程子項目 => ${$("#subsystem_name").val()} 成功！`,
+          text: `新增系統子項目 => ${$("#subsystem_name").val()} 成功！`,
           icon: "success",
           buttons: false,
           timer: 1500,
@@ -222,33 +275,69 @@
       }
     });
   });
-  // 刪除子項目 Dialog 給值
-  $(document).on('click', '.delete-modal', function() {
-    $('#del-title').text($('#del-title').text() + $(this).data('systemname'));
-    $('#del-content').text($('#del-content').text() + $(this).data('name'));
+  // 修改子項目 dialog 事件
+  $('#edit-sub').on('click', function() {
+    $('#edit-sub-id').val($(this).data('id'));
+    $('#edit-subsystem-title').text('系統分類: ' + $(this).data('systemname'));
+    $('#sub_system_name').val($(this).data('name'));
+    $('#edit-format').val($(this).data('format'));
+    $('#unit_price').val($(this).data('unitprice'));
+    $('#unit').val($(this).data('unit'));
+  });
+  // 修改子項目
+  $('#editSubSystem-btn').on('click', function() {
+    console.log($('#unit').val());
+    $.ajax({
+      type: 'put',
+      url: '/subsystem',
+      data: {
+        'id': $('#edit-sub-id').val(),
+        'name': $('#sub_system_name').val(),
+        'format': $('#edit-format').val(),
+        'unit_price': $('#unit_price').val(),
+        'unit': $('#unit').val()
+      },
+      success: function(resp) {
+        swal({
+          title: "Success",
+          text: "修改成功！",
+          icon: "success",
+          buttons: false,
+          timer: 1500,
+        })
+        .then(() => {
+          location.reload(true);
+        });
+      }
+    });
+  });
+  // 刪除子項目 dialog 事件
+  $('#delete-sub').on('click', function() {
+    $('#del-sub-title').text('系統分類: ' + $(this).data('systemname'));
+    $('#del-sub-content').text('內容物: ' + $(this).data('name'));
+    $('#del-sub-id').val($(this).data('id'));
   });
   // 刪除子項目
   $('#delSubSystem-btn').on('click', function() {
-    console.log('test');
-    // $.ajax({
-    //   type: 'delete',
-    //   url: '/subengineering',
-    //   data: {
-    //     'id': $("#sub_project_id").val()
-    //   },
-    //   success: function(resp) {
-    //     swal({
-    //       title: "Success",
-    //       text: "刪除成功！",
-    //       icon: "success",
-    //       buttons: false,
-    //       timer: 1500,
-    //     })
-    //     .then(() => {
-    //       location.reload(true);
-    //     });
-    //   }
-    // });
+    $.ajax({
+      type: 'delete',
+      url: '/subsystem',
+      data: {
+        'id': $('#del-sub-id').val()
+      },
+      success: function(resp) {
+        swal({
+          title: "Success",
+          text: "刪除成功！",
+          icon: "success",
+          buttons: false,
+          timer: 1500,
+        })
+        .then(() => {
+          location.reload(true);
+        });
+      }
+    });
   });
 </script>
 @endsection
@@ -265,10 +354,10 @@
 .format {
   width: 25%;
 }
-.unti_price {
+.unit_price {
   width: 10%;
 }
-.unti {
+.unit {
   width: 10%;
 }
 .system-list-title {
