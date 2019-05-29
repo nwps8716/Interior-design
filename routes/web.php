@@ -35,6 +35,8 @@ Route::delete('/engineering/budget/{budget_id}', 'Budget\BudgetController@delete
 ## 系統單價
 Route::get('/system/unitprice', 'UnitPrice\UnitPriceController@getSystemList');
 Route::post('/system', 'UnitPrice\UnitPriceController@createSystem');
+Route::put('/system', 'UnitPrice\UnitPriceController@putSystem');
+Route::delete('/system', 'UnitPrice\UnitPriceController@deleteSystem');
 Route::post('/subsystem', 'UnitPrice\UnitPriceController@createSubSystem');
 Route::put('/subsystem', 'UnitPrice\UnitPriceController@putSubSystem');
 Route::delete('/subsystem', 'UnitPrice\UnitPriceController@deleteSubSystem');

@@ -251,7 +251,7 @@ class UnitPriceController extends Controller
     }
 
     /**
-     * 取得系統工程單價列表
+     * 取得系統單價列表
      *
      * @return array
      */
@@ -286,8 +286,9 @@ class UnitPriceController extends Controller
 
         ## 整理資料
         foreach ($aSubSystem as $iKey => $aValue) {
-            $aResult[$aValue['system_id']][] = [
+            $aResult[$aValue['system_id']][$aValue['general_name']][] = [
                 'sub_system_id' => $aValue['sub_system_id'],
+                'general_name' => $aValue['general_name'],
                 'sub_system_name' => $aValue['sub_system_name'],
                 'format' => $aValue['format'],
                 'unit_price' => $aValue['unit_price'],
@@ -347,6 +348,7 @@ class UnitPriceController extends Controller
         }
 
         $iSystemID = (int) $_oRequest->input('system_id');
+        $sGeneralName = $_oRequest->input('general_name');
         $sSubSystemName = $_oRequest->input('sub_system_name');
         $sFormat = $_oRequest->input('format');
         $iUnitPrice = (int) $_oRequest->input('unit_price');
@@ -354,11 +356,12 @@ class UnitPriceController extends Controller
 
         $bResult = $_oSubSystemModle->insert(
             [
+                'general_name' => $sGeneralName,
                 'sub_system_name' => $sSubSystemName,
-                'system_id' => $iSystemID,
                 'format' => $sFormat,
                 'unit_price' => $iUnitPrice,
-                'unit' => $sUnit
+                'unit' => $sUnit,
+                'system_id' => $iSystemID
             ]
         );
 
@@ -366,7 +369,7 @@ class UnitPriceController extends Controller
     }
 
     /**
-     * 刪除系統單價子項目內容
+     * 刪除-系統單價子項目內容
      *
      * @return array
      */
@@ -382,7 +385,7 @@ class UnitPriceController extends Controller
 
         $iSubSystemID = (int) $_oRequest->input('id');
 
-        ## 刪除工程子項目
+        ## 刪除系統子項目
         $bResult = $_oSubSystemModle
             ->where('sub_system_id', $iSubSystemID)
             ->delete();
@@ -391,7 +394,7 @@ class UnitPriceController extends Controller
     }
 
     /**
-     * 更新系統子項目內容
+     * 更新-系統單價子項目內容
      *
      * @return array
      */
@@ -406,22 +409,89 @@ class UnitPriceController extends Controller
         }
         
         $iSubSystemID = (int) $_oRequest->input('id');
+        $sGeneralName = $_oRequest->input('general_name');
         $sSubSystemName = $_oRequest->input('name');
         $sFormat = $_oRequest->input('format');
         $iUnitPrice = (int) $_oRequest->input('unit_price');
         $sUnit = $_oRequest->input('unit');
 
-        ## 更新工程子項目
+        ## 更新系統子項目
         $bResult = $_oSubSystemModle
             ->where('sub_system_id', $iSubSystemID)
             ->update(
                 [
+                    'general_name' => $sGeneralName,
                     'sub_system_name' => $sSubSystemName,
                     'format' => $sFormat,
                     'unit_price' => $iUnitPrice,
                     'unit' => $sUnit,
                 ]
             );
+
+        return response()->json(['result' => true]);
+    }
+
+    /**
+     * 修改-系統分類項目
+     *
+     * @return array
+     */
+    public function putSystem(
+        Request $_oRequest,
+        SystemModle $_oSystemModle
+    )
+    {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
+        $iSystemID = (int) $_oRequest->input('id');
+        $sSystemName = $_oRequest->input('name');
+
+        ## 更新系統分類項目名稱
+        $bResult = $_oSystemModle
+            ->where('system_id', $iSystemID)
+            ->update(
+                [
+                    'system_name' => $sSystemName,
+                ]
+            );
+
+        return response()->json(['result' => true]);
+    }
+
+    /**
+     * 刪除-系統單價分類項目
+     *
+     * @return array
+     */
+    public function deleteSystem(
+        Request $_oRequest,
+        SystemModle $_oSystemModle,
+        SubSystemModle $_oSubSystemModle
+    )
+    {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
+        $iSystemID = (int) $_oRequest->input('id');
+
+        ## 取得系統分類底下是否還有子項目
+        $iSubSystemCount = $_oSubSystemModle
+            ->where('system_id', $iSystemID)
+            ->count();
+
+        if ($iSubSystemCount > 0) {
+            return response()->json(['result' => false]);
+        }
+
+        ## 刪除系統分類項目
+        $bResult = $_oSystemModle
+            ->where('system_id', $iSystemID)
+            ->delete();
 
         return response()->json(['result' => true]);
     }
