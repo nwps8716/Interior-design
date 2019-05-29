@@ -15,6 +15,7 @@ class CreateSubSystemsTable extends Migration
     {
         Schema::create('sub_system', function (Blueprint $table) {
             $table->increments('sub_system_id')->unique()->comment('系統子項目ID');
+            $table->string('general_name', 255)->comment('統稱')->nullable();
             $table->string('sub_system_name', 255)->comment('系統子項目內容物');
             $table->string('format', 255)->comment('系統子項目規格');
             $table->mediumInteger('unit_price')->comment('系統子項目單價');

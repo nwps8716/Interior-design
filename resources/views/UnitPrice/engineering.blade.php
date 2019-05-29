@@ -393,8 +393,6 @@
   });
   // 修改工程分類項目
   $('.modal-footer').on('click', '#edit-project-btn', function() {
-    console.log('防護/垃圾清運V2');
-    console.log($(".edit-project-name").val());
     $.ajax({
       type: 'put',
       url: '/engineering',
