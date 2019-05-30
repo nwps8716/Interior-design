@@ -42,6 +42,7 @@
             <thead>
               <tr class="subsystem-list-title">
                 <td>統稱</td>
+                <td>備註</td>
                 <td>內容物</td>
                 <td>規格</td>
                 <td>單價</td>
@@ -58,6 +59,7 @@
                     @elseif (count($general) <= 1)
                       <td class="general_name">{{$sub_name['general_name']}}</td>
                     @endif
+                    <td class="remark">{{$sub_name['remark']}}</td>
                     <td class="system_name">{{$sub_name['sub_system_name']}}</td>
                     <td class="format">{{$sub_name['format']}}</td>
                     <td class="unit_price">{{$sub_name['unit_price']}}</td>
@@ -73,6 +75,7 @@
                         data-unit="{{$sub_name['unit']}}"
                         data-unitprice="{{$sub_name['unit_price']}}"
                         data-systemname="{{$systemname}}"
+                        data-remark="{{$sub_name['remark']}}"
                         data-toggle="modal"
                         data-target="#editSubSystem">
                           <span class="glyphicon glyphicon-edit">修改</span>
@@ -195,6 +198,12 @@
                   <input type="text" class="form-control" id="unit">
                 </div>
               </div>
+              <div class="form-group">
+                <label class="control-label col-sm-2">備註:</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="remark">
+                </div>
+              </div>
               <input type="hidden" class="form-control" id="edit-sub-id">
             </form>
           </div>
@@ -305,6 +314,12 @@
                     <input type="text" class="form-control" id="unitname">
                   </div>
                 </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-2">備註:</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="add-remark">
+                  </div>
+                </div>
               </form>
             </div>
             <div class="modal-footer">
@@ -410,7 +425,8 @@
         'sub_system_name': $("#subsystem_name").val(),
         'format': $("#format").val(),
         'unit_price': $("#unitprice").val(),
-        'unit': $("#unitname").val()
+        'unit': $("#unitname").val(),
+        'remark': $("#add-remark").val()
       },
       success: function(resp) {
         swal({
@@ -435,6 +451,7 @@
     $('#edit-format').val($(this).data('format'));
     $('#unit_price').val($(this).data('unitprice'));
     $('#unit').val($(this).data('unit'));
+    $('#remark').val($(this).data('remark'));
   });
   // 修改子項目
   $('#editSubSystem-btn').on('click', function() {
@@ -447,7 +464,8 @@
         'name': $('#sub_system_name').val(),
         'format': $('#edit-format').val(),
         'unit_price': $('#unit_price').val(),
-        'unit': $('#unit').val()
+        'unit': $('#unit').val(),
+        'remark': $("#remark").val()
       },
       success: function(resp) {
         swal({
@@ -500,17 +518,20 @@
 .system-title {
   position: relative;
 }
+.remark {
+  width: 10%;
+}
 .system_name {
-  width: 35%;
+  width: 25%;
 }
 .format {
-  width: 25%;
+  width: 15%;
 }
 .unit_price {
   width: 10%;
 }
 .unit {
-  width: 10%;
+  width: %;
 }
 .system-list-title {
   color: white;

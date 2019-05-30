@@ -66,14 +66,14 @@
                     data-unitprice="{{$sub_name['unit_price']}}"
                     data-remark="{{$sub_name['remark']}}"
                     data-projectname="{{$projectname}}">
-                      <span class="glyphicon glyphicon-edit">Edit</span>
+                      <span class="glyphicon glyphicon-edit">修改</span>
                   </button>
                   <button
                     class="delete-modal btn btn-danger"
                     data-id="{{$sub_name['sub_project_id']}}"
                     data-name="{{$sub_name['sub_project_name']}}"
                     data-projectname="{{$projectname}}">
-                      <span class="glyphicon glyphicon-trash">Delete</span>
+                      <span class="glyphicon glyphicon-trash">刪除</span>
                   </button>
                 </td>
               </tbody>

@@ -167,21 +167,26 @@ class PingsController extends Controller
         $iSystem_budget = (empty($aPings['系統預算'])) ? 55 : (int) $aPings['系統預算'];
 
         foreach ($this->level as $key => $level_name) {
-            $sBudgetName = $level_name . '級工程';
+            $sLevelName = $level_name . '級工程';
+            ## 預設級距每坪數多少錢
+            $iLevelPingsPrice = (isset($aPings[$sLevelName])) ? $aPings[$sLevelName] : 50;
             $aData[$key]['pings'] = $_iPings;
             $aData[$key]['level'] = $level_name;
-            $aData[$key]['price_of_level'] = $aPings[$sBudgetName];
+            $aData[$key]['price_of_level'] = $iLevelPingsPrice;
             $aData[$key]['price'] = $_iPings * $aData[$key]['price_of_level'];
             $aData[$key]['engineering_budget'] = $iEngineering_budget . '%';
             $aData[$key]['engineering_budget_total'] = $aData[$key]['price'] * ($iEngineering_budget/100);
             $aData[$key]['system_budget'] = $iSystem_budget . '%';
-            $aData[$key]['system_price'] = $aData[$key]['price'] * ($iSystem_budget/100);
-            $aTmp = $this->countSystemCardAndDiscount($aData[$key]['system_price']);
+            $iSystemPrice = $aData[$key]['price'] * ($iSystem_budget/100);
+            $aTmp = $this->countSystemCardAndDiscount($iSystemPrice);
             $aData[$key]['system_card_price'] = $aTmp['card_price'];
             $aData[$key]['system_discount'] = $aTmp['discount'];
+            $aData[$key]['system_price'] = $iSystemPrice;
+
+            ## 級距資料
             $aLevelData[$key] = [
-                'level_name' => $sBudgetName,
-                'pings_price' => $aPings[$sBudgetName],
+                'level_name' => $sLevelName,
+                'pings_price' => $iLevelPingsPrice,
             ];
         }
 

@@ -17,9 +17,9 @@
         <th>工程預算%</th>
         <th>工程總預算</th>
         <th>系統預算%</th>
-        <th>系統售價</th>
         <th>系統牌價</th>
         <th>系統折數</th>
+        <th>系統售價</th>
       </tr>
     </thead>
     <tbody>
