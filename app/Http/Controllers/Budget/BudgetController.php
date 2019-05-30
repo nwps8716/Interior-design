@@ -43,7 +43,7 @@ class BudgetController extends Controller
         $aResult = $aEngineeringList = $aUserBudget = [];
         $iSubTotal = $iAmount = 0;
 
-        $iBudget = (int) $_oRequest->input('budget', 1);
+        $iLevel = (int) $_oRequest->input('level_id', 1);
 
         ## 判斷使用者權限
         if ($this->checkSession($_oRequest, false) !== 'success') {
@@ -58,7 +58,8 @@ class BudgetController extends Controller
             $_oPingsModle,
             $_oUserModle,
             $aUserInfo['user_name'],
-            $iBudget
+            $iLevel,
+            '工程預算'
         );
 
         ## 取得工程主項目列表
@@ -82,7 +83,7 @@ class BudgetController extends Controller
         $aUserBudget = $_oUserBudgetModle
             ->select('sub_project_id', 'sub_project_number', 'remark')
             ->where('user_name', $aUserInfo['user_name'])
-            ->where('budget_id', $iBudget)
+            ->where('budget_id', $iLevel)
             ->get()
             ->keyBy('sub_project_id')
             ->toArray();
@@ -115,7 +116,7 @@ class BudgetController extends Controller
 
         return view('budget/engineering', [
             'spacing' => $this->aSpacing,
-            'budget_id' => $iBudget,
+            'level_id' => $iLevel,
             'total_info' => $aTotalData,
             'engineering' => $aEngineering,
             'list' => $aResult
@@ -130,7 +131,7 @@ class BudgetController extends Controller
     public function putUserEngineering(
         Request $_oRequest,
         UserBudgetModle $_oUserBudgetModle,
-        $_iBudgetID
+        $_iLevelID
     )
     {
         ## 判斷使用者權限
@@ -147,7 +148,7 @@ class BudgetController extends Controller
         ## 更新使用者裝潢工程級距的子細目數量
         $bResult = $_oUserBudgetModle->updateData(
             $aUserInfo['user_name'],
-            $_iBudgetID,
+            $_iLevelID,
             $iSubProjectID,
             $iSubProjectNumber
         );
@@ -163,7 +164,7 @@ class BudgetController extends Controller
     public function deleteUserEngineering(
         Request $_oRequest,
         UserBudgetModle $_oUserBudgetModle,
-        $_iBudgetID
+        $_iLevelID
     )
     {
         ## 判斷使用者權限
@@ -176,10 +177,70 @@ class BudgetController extends Controller
 
         $oResult = $_oUserBudgetModle
             ->where('user_name', $aUserInfo['user_name'])
-            ->where('budget_id', $_iBudgetID)
+            ->where('budget_id', $_iLevelID)
             ->delete();
 
         return response()->json(['result' => true]);
+    }
+
+    /**
+     * 取得好禮贈送列表
+     *
+     * @return boolean
+     */
+    public function getFreeGift(
+        Request $_oRequest,
+        PingsModle $_oPingsModle,
+        UserModle $_oUserModle,
+        SystemModle $_oSystemModle,
+        SubSystemModle $_oSubSystemModle
+    )
+    {
+        $iSubTotal = $iTotal = 0;
+        $iLevel = (int) $_oRequest->input('level_id', 1);
+
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+
+        ## 使用者登入資訊
+        $aUserInfo = $_oRequest->session()->get('login_user_info');
+
+        ## 取得使用者級距總預算
+        $iSystemPrice = $this->getUserLevelPingsAmount(
+            $_oPingsModle,
+            $_oUserModle,
+            $aUserInfo['user_name'],
+            $iLevel,
+            '系統預算'
+        );
+
+        ## 取得系統牌價
+        $iTotal = $this->countSystemCardAndDiscount($iSystemPrice);
+
+        ## 總預算資料
+        $aTotalData = [
+            'total' => $iTotal,
+            'sub_total' => $iSubTotal,
+            'remaining_money' => $iTotal - $iSubTotal,
+        ];
+
+        ## 好禮贈送為總系統牌價3%
+        $iTotal = round($iTotal * 0.03, 2);
+
+        ## 總預算資料
+        $aTotalData = [
+            'total' => $iTotal,
+            'sub_total' => $iSubTotal,
+            'remaining_money' => $iTotal - $iSubTotal,
+        ];
+
+        return view('budget/system_freegift', [
+            'spacing' => $this->aSpacing,
+            'level_id' => $iLevel,
+            'total_info' => $aTotalData
+        ]);
     }
 
     /**
@@ -195,49 +256,52 @@ class BudgetController extends Controller
         SubSystemModle $_oSubSystemModle
     )
     {
+        $iSubTotal = 0;
+
         ## 判斷使用者權限
         if ($this->checkSession($_oRequest, false) !== 'success') {
             return redirect($this->checkSession($_oRequest, false));
         }
 
-        $iBudget = (int) $_oRequest->input('budget', 1);
+        $iLevel = (int) $_oRequest->input('level_id', 1);
+
         ## 使用者登入資訊
         $aUserInfo = $_oRequest->session()->get('login_user_info');
-        ## 取得使用者級距
-        $iAmount = $this->getUserLevelPingsAmount(
+
+        ## 取得使用者級距總預算
+        $iSystemPrice = $this->getUserLevelPingsAmount(
             $_oPingsModle,
             $_oUserModle,
             $aUserInfo['user_name'],
-            $iBudget
+            $iLevel,
+            '系統預算'
         );
-        ## 系統預算 % 數
-        $iSystemPercent = $_oPingsModle
-            ->where('name', '系統預算')
-            ->pluck('numerical_value')
-            ->first();
-        ## 總預算
-        $iTotal = $iAmount * ($iSystemPercent / 100);
-        $iSubTotal = 0;
+        ## 取得系統牌價
+        $iTotal = $this->countSystemCardAndDiscount($iSystemPrice);
         ## 總預算資料
         $aTotalData = [
             'total' => $iTotal,
             'sub_total' => $iSubTotal,
             'remaining_money' => $iTotal - $iSubTotal,
         ];
+
         ## 取得系統主項目列表
         $aSystem = $_oSystemModle
             ->get()
             ->sortBy('sort')
             ->pluck('system_name', 'system_id')
             ->toArray();
+
         ## 給預設Key值
         foreach ($aSystem as $key => $value) {
             $aResult[$key] = [];
         }
+
         ## 取得系統子項目列表
         $aSubSystem = $_oSubSystemModle
             ->get()
             ->toArray();
+
         ## 整理資料
         foreach ($aSubSystem as $iKey => $aValue) {
             $aResult[$aValue['system_id']][$aValue['general_name']][] = [
@@ -253,7 +317,7 @@ class BudgetController extends Controller
 
         return view('budget/system', [
             'spacing' => $this->aSpacing,
-            'budget_id' => $iBudget,
+            'level_id' => $iLevel,
             'total_info' => $aTotalData,
             'system' => $aSystem,
             'sub_system' => $aResult
@@ -263,18 +327,20 @@ class BudgetController extends Controller
     ## ========================= 共用Function =========================##
     /**
      * 取得使用者級距坪數總預算
-     * @param string $_sUserName 使用者登入名稱
-     * @param int    $_iLevel    工程級距ID
+     * @param string $_sUserName  使用者登入名稱
+     * @param int    $_iLevel     工程級距ID
+     * @param string $_sPriceName 預算名稱(工程預算 or 系統預算)
      * @return int
      */
     private function getUserLevelPingsAmount(
         PingsModle $_oPingsModle,
         UserModle $_oUserModle,
         $_sUserName,
-        $_iLevel
+        $_iLevel,
+        $_sPriceName
     )
     {
-        $iAmount = 0;
+        $iAmount = $iPercent = $iLevelAmount = 0;
 
         $iUserPings = $_oUserModle
             ->where('user_name', $_sUserName)
@@ -290,9 +356,46 @@ class BudgetController extends Controller
         ## 取得該坪數的每坪金額
         $iLevelAmount = $aPings[$sLevelName];
 
+        ## 取得預算的％數
+        $iPercent = $aPings[$_sPriceName]/ 100;
+
         ## 計算總預算
-        $iAmount = $iLevelAmount * $iUserPings;
+        $iAmount = ($iLevelAmount * $iUserPings) * $iPercent;
 
         return $iAmount;
+    }
+
+    /**
+     * 計算系統牌價
+     *
+     * @return array
+     */
+    private function countSystemCardAndDiscount($iSystemPrice)
+    {
+        $iCardPrice = 0;
+
+        ## 系統牌價
+        switch (true) {
+            case (($iSystemPrice / 0.95) < 200000):
+                $iCardPrice = $iSystemPrice;
+                break;
+            case (($iSystemPrice / 0.65) >= 500000);
+                $iCardPrice = $iSystemPrice / 0.65;
+                break;
+            case (($iSystemPrice / 0.75) >= 400000);
+                $iCardPrice = $iSystemPrice / 0.75;
+                break;
+            case (($iSystemPrice / 0.85) >= 300000);
+                $iCardPrice = $iSystemPrice / 0.85;
+                break;
+            case (($iSystemPrice / 0.95) >= 200000);
+                $iCardPrice = $iSystemPrice / 0.95;
+                break;
+            default:
+                $iCardPrice = $iSystemPrice;
+                break;
+        }
+
+        return round($iCardPrice, 2);
     }
 }

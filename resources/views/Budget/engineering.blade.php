@@ -3,14 +3,14 @@
 @section('feature')
 <div>
   <h1 class='content-title'>裝潢工程預算表</h1>
-  <div class="search-budget">
+  <div class="search-level">
     <div class="form-group">
       <label class="control-label">級距:</label>
-      <select class="budget">
+      <select class="level">
         @foreach($spacing as $id => $name)
           <option
             value="{{$id}}"
-            @if ($id == $budget_id)
+            @if ($id == $level_id)
               selected="selected"
             @endif>
             {{$name}}級裝潢工程預算
@@ -38,7 +38,7 @@
       <span>
         <thead>
           <tr class="">
-            <td>{{$spacing[$budget_id]}}級裝潢工程總預算</td>
+            <td>{{$spacing[$level_id]}}級裝潢工程總預算</td>
             <td class="num-td">${{number_format($total_info['total'], 2)}}</td>
             <td>小記</td>
             <td class="num-td">${{number_format($total_info['sub_total'], 2)}}</td>
@@ -109,12 +109,12 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-      <h5 class="modal-title" class="resetBudgetLabel">{{$spacing[$budget_id]}}級裝潢工程預算 - 還原設定</h5>
+      <h5 class="modal-title" class="resetBudgetLabel">{{$spacing[$level_id]}}級裝潢工程預算 - 還原設定</h5>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
         <div class="deleteContent">
-          確定要還原 "{{$spacing[$budget_id]}}級裝潢工程預算 -> 數量" 設定嗎?
+          確定要還原 "{{$spacing[$level_id]}}級裝潢工程預算 -> 數量" 設定嗎?
         </div>
       </div>
       <div class="modal-footer">
@@ -130,16 +130,16 @@
 @parent
 <script>
   // 查詢其他級距工程預算表
-  $('.search-budget').on('click', '.search', function() {
-    var budgetID = $(".budget").val();
-    window.location.href = window.location.origin + '/engineering/budget?budget=' + budgetID;
+  $('.search-level').on('click', '.search', function() {
+    var levelID = $(".level").val();
+    window.location.href = window.location.origin + '/engineering/budget?level_id=' + levelID;
   });
   // 更改數量
   $('.subproject-num').change(function (event) {
     event.preventDefault();
     var subproject_number = event.target.value;
     var subproject_id = event.target.id;
-    var budget_id = $(".budget").val();
+    var level_id = $(".level").val();
     var default_value = event.target.defaultValue;
     if (subproject_number == '' || subproject_number < 0) {
       swal({
@@ -155,7 +155,7 @@
     } else if (subproject_number !== default_value) {
       $.ajax({
         type: 'put',
-        url: '/engineering/budget/' + budget_id,
+        url: '/engineering/budget/' + level_id,
         data: {
           'sub_project_id': subproject_id,
           'sub_project_number': subproject_number
@@ -178,10 +178,10 @@
   });
   // 還原使用者該級距的數量設定
   $('#resetBudget-btn').on('click', function() {
-    var budget_id = $(".budget").val();
+    var level_id = $(".level").val();
     $.ajax({
         type: 'delete',
-        url: '/engineering/budget/' + budget_id,
+        url: '/engineering/budget/' + level_id,
         success: function(resp) {
           if (resp.result === true) {
             swal({
