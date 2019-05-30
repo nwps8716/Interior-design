@@ -41,6 +41,8 @@ Route::delete('/system', 'UnitPrice\UnitPriceController@deleteSystem');
 Route::post('/subsystem', 'UnitPrice\UnitPriceController@createSubSystem');
 Route::put('/subsystem', 'UnitPrice\UnitPriceController@putSubSystem');
 Route::delete('/subsystem', 'UnitPrice\UnitPriceController@deleteSubSystem');
+## 好禮贈送
+Route::get('/system/free_gift', 'Budget\BudgetController@getFreeGift');
 ## 系統預算
 Route::get('/system/budget', 'Budget\BudgetController@getSystem');
 ## 坪數估價

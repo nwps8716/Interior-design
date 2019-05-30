@@ -183,6 +183,22 @@ class BudgetController extends Controller
     }
 
     /**
+     * 取得好禮贈送列表
+     *
+     * @return boolean
+     */
+    public function getFreeGift(Request $_oRequest)
+    {
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, false) !== 'success') {
+            return redirect($this->checkSession($_oRequest, false));
+        }
+        return view('budget/system_freegift', [
+            'spacing' => $this->aSpacing
+        ]);
+    }
+
+    /**
      * 取得系統工程預算表
      *
      * @return boolean

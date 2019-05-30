@@ -30,6 +30,7 @@
         <a href="/system/unitprice" class="list-group-item list-group-item-action bg-light">系統單價</a>
         <a href="/engineering/budget" class="list-group-item list-group-item-action bg-light">裝潢工程預算表</a>
         <a href="/system/budget" class="list-group-item list-group-item-action bg-light">系統工程預算表</a>
+        <a href="/system/free_gift" class="list-group-item list-group-item-action bg-light">好禮贈送表</a>
       </div>
     </div>
     <!-- /#sidebar-wrapper -->
