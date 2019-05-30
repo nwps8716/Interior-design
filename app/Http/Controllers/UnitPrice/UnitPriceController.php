@@ -297,7 +297,8 @@ class UnitPriceController extends Controller
                 'sub_system_name' => $aValue['sub_system_name'],
                 'format' => $aValue['format'],
                 'unit_price' => $aValue['unit_price'],
-                'unit' => $aValue['unit']
+                'unit' => $aValue['unit'],
+                'remark' => $aValue['remark']
             ];
         }
         
@@ -358,6 +359,7 @@ class UnitPriceController extends Controller
         $sFormat = $_oRequest->input('format');
         $iUnitPrice = (int) $_oRequest->input('unit_price');
         $sUnit = $_oRequest->input('unit');
+        $sRemark = $_oRequest->input('remark');
 
         $bResult = $_oSubSystemModle->insert(
             [
@@ -366,7 +368,8 @@ class UnitPriceController extends Controller
                 'format' => $sFormat,
                 'unit_price' => $iUnitPrice,
                 'unit' => $sUnit,
-                'system_id' => $iSystemID
+                'system_id' => $iSystemID,
+                'remark' => $sRemark
             ]
         );
 
@@ -419,6 +422,7 @@ class UnitPriceController extends Controller
         $sFormat = $_oRequest->input('format');
         $iUnitPrice = (int) $_oRequest->input('unit_price');
         $sUnit = $_oRequest->input('unit');
+        $sRemark = $_oRequest->input('remark');
 
         ## 更新系統子項目
         $bResult = $_oSubSystemModle
@@ -430,6 +434,7 @@ class UnitPriceController extends Controller
                     'format' => $sFormat,
                     'unit_price' => $iUnitPrice,
                     'unit' => $sUnit,
+                    'remark' => $sRemark,
                 ]
             );
 
