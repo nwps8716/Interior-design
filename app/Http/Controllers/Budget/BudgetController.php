@@ -8,6 +8,8 @@ use App\Model\Pings\Pings As PingsModle;
 use App\Model\User\User As UserModle;
 use App\Model\UnitPrice\Engineering As EngineeringModle;
 use App\Model\UnitPrice\SubEngineering As SubEngineeringModle;
+use App\Model\UnitPrice\System As SystemModle;
+use App\Model\UnitPrice\SubSystem As SubSystemModle;
 use App\Model\User\UserBudget As UserBudgetModle;
 use Alert;
 use Response;
@@ -185,14 +187,76 @@ class BudgetController extends Controller
      *
      * @return boolean
      */
-    public function getSystem(Request $_oRequest)
+    public function getSystem(
+        Request $_oRequest,
+        PingsModle $_oPingsModle,
+        UserModle $_oUserModle,
+        SystemModle $_oSystemModle,
+        SubSystemModle $_oSubSystemModle
+    )
     {
         ## 判斷使用者權限
         if ($this->checkSession($_oRequest, false) !== 'success') {
             return redirect($this->checkSession($_oRequest, false));
         }
+
+        $iBudget = (int) $_oRequest->input('budget', 1);
+        ## 使用者登入資訊
+        $aUserInfo = $_oRequest->session()->get('login_user_info');
+        ## 取得使用者級距
+        $iAmount = $this->getUserLevelPingsAmount(
+            $_oPingsModle,
+            $_oUserModle,
+            $aUserInfo['user_name'],
+            $iBudget
+        );
+        ## 系統預算 % 數
+        $iSystemPercent = $_oPingsModle
+            ->where('name', '系統預算')
+            ->pluck('numerical_value')
+            ->first();
+        ## 總預算
+        $iTotal = $iAmount * ($iSystemPercent / 100);
+        $iSubTotal = 0;
+        ## 總預算資料
+        $aTotalData = [
+            'total' => $iTotal,
+            'sub_total' => $iSubTotal,
+            'remaining_money' => $iTotal - $iSubTotal,
+        ];
+        ## 取得系統主項目列表
+        $aSystem = $_oSystemModle
+            ->get()
+            ->sortBy('sort')
+            ->pluck('system_name', 'system_id')
+            ->toArray();
+        ## 給預設Key值
+        foreach ($aSystem as $key => $value) {
+            $aResult[$key] = [];
+        }
+        ## 取得系統子項目列表
+        $aSubSystem = $_oSubSystemModle
+            ->get()
+            ->toArray();
+        ## 整理資料
+        foreach ($aSubSystem as $iKey => $aValue) {
+            $aResult[$aValue['system_id']][$aValue['general_name']][] = [
+                'sub_system_id' => $aValue['sub_system_id'],
+                'general_name' => $aValue['general_name'],
+                'sub_system_name' => $aValue['sub_system_name'],
+                'format' => $aValue['format'],
+                'unit_price' => $aValue['unit_price'],
+                'unit' => $aValue['unit'],
+                'number' => 0,
+            ];
+        }
+
         return view('budget/system', [
-            'spacing' => $this->aSpacing
+            'spacing' => $this->aSpacing,
+            'budget_id' => $iBudget,
+            'total_info' => $aTotalData,
+            'system' => $aSystem,
+            'sub_system' => $aResult
         ]);
     }
 
