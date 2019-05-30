@@ -48,10 +48,16 @@
           <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                使用者名稱
+                Hi, {{ Session::get('login_user_info')['user_name'] }}
               </a>
               <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">修改密碼</a>
+                <a
+                  id="put-password"
+                  class="put-password dropdown-item"
+                  data-toggle="modal"
+                  data-target="#putPassword">
+                    修改密碼
+                </a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="/logout">登出</a>
               </div>
@@ -59,6 +65,34 @@
           </ul>
         </div>
       </nav>
+
+  <!-- 修改密碼 -->
+  <div id="putPassword" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="putPasswordLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" class="putPasswordLabel">修改密碼</h5>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <div class="put-password-div">
+                <div style="margin-bottom: 6px;">
+                  密碼:
+                  <input type="password" name="password" id="password"/>
+                </div>
+                <div style="margin-bottom: 6px;">
+                  密碼確認:
+                  <input type="password" name="re_password" id="re_password"/>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button id="edit-password-btn" type="button" class="btn btn-success" data-dismiss="modal">確定修改</button>
+              </div>
+            </div>
+          </div>
+      </div>
+  </div>
 
       <div class="container-fluid">
         @section('feature')
@@ -92,6 +126,26 @@
     $("#menu-toggle").click(function(e) {
       e.preventDefault();
       $("#wrapper").toggleClass("toggled");
+    });
+    // 修改工程分類項目
+    $('.modal-footer').on('click', '#edit-password-btn', function() {
+      $.ajax({
+        type: 'put',
+        url: '/user/password',
+        data: {
+          'password': $("#password").val(),
+          're_password': $("#re_password").val(),
+        },
+        success: function(resp) {
+          swal({
+            title: "Success",
+            text: `修改成功！`,
+            icon: "success",
+            buttons: false,
+            timer: 1500,
+          });
+        }
+      });
     });
   </script>
 

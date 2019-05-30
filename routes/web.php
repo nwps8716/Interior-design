@@ -20,6 +20,7 @@ Route::post('/login', 'User\UserController@postLogin');
 Route::get('/logout', 'User\UserController@getLogout');
 Route::get('/adduser', 'User\UserController@getCreateUser');
 Route::post('/user/create', 'User\UserController@createUser');
+Route::put('/user/password', 'User\UserController@putUserPassword');
 ## 工程單價
 Route::get('/engineering/unitprice', 'UnitPrice\UnitPriceController@getEngineeringList');
 Route::post('/engineering', 'UnitPrice\UnitPriceController@createEngineering');
