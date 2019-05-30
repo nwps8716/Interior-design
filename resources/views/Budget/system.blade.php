@@ -3,14 +3,14 @@
 @section('feature')
   <div>
     <h1 class='content-title'>系統工程預算表</h1>
-    <div class="search-budget">
+    <div class="search-level">
       <div class="form-group">
         <label class="control-label">級距:</label>
-        <select class="budget">
+        <select class="level">
           @foreach($spacing as $id => $name)
             <option
               value="{{$id}}"
-              @if ($id == $budget_id)
+              @if ($id == $level_id)
                 selected="selected"
               @endif>
               {{$name}}級系統工程預算
@@ -38,7 +38,7 @@
       <span>
         <thead>
           <tr class="">
-            <td>{{$spacing[$budget_id]}}級系統工程總預算</td>
+            <td>{{$spacing[$level_id]}}級系統工程總預算</td>
             <td class="num-td">${{number_format($total_info['total'], 2)}}</td>
             <td>小記</td>
             <td class="num-td">${{number_format($total_info['sub_total'], 2)}}</td>
