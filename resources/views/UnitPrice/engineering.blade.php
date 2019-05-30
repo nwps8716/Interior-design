@@ -44,6 +44,7 @@
           <span>
             <thead>
               <tr class="subproject-title">
+                <td >備註</td>
                 <td >項目</td>
                 <td >單價</td>
                 <td >單位</td>
@@ -52,16 +53,18 @@
             </thead>
             @foreach($sub_engineering[$id] as $sub_name)
               <tbody>
+                <td class="remark">{{$sub_name['remark']}}</td>
                 <td class="project-name">{{$sub_name['sub_project_name']}}</td>
-                <td class="unti_price">{{$sub_name['unti_price']}}</td>
-                <td class="unti">{{$sub_name['unti']}}</td>
+                <td class="unit_price">{{$sub_name['unit_price']}}</td>
+                <td class="unit">{{$sub_name['unit']}}</td>
                 <td>
                   <button
                     class="edit-modal btn btn-success"
                     data-id="{{$sub_name['sub_project_id']}}"
                     data-name="{{$sub_name['sub_project_name']}}"
-                    data-unti="{{$sub_name['unti']}}"
-                    data-untiprice="{{$sub_name['unti_price']}}"
+                    data-unit="{{$sub_name['unit']}}"
+                    data-unitprice="{{$sub_name['unit_price']}}"
+                    data-remark="{{$sub_name['remark']}}"
                     data-projectname="{{$projectname}}">
                       <span class="glyphicon glyphicon-edit">Edit</span>
                   </button>
@@ -98,15 +101,21 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="control-label col-sm-2" for="unti_price">單價:</label>
+                  <label class="control-label col-sm-2" for="unit_price">單價:</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" id="unti_price">
+                    <input type="text" class="form-control" id="unit_price">
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="control-label col-sm-2">單位:</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" id="unti">
+                    <input type="text" class="form-control" id="unit">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-2">備註:</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="remark">
                   </div>
                 </div>
                 <input type="hidden" class="form-control" id="sub_project_id">
@@ -178,15 +187,21 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="control-label col-sm-4" for="untiprice">單價:</label>
+                  <label class="control-label col-sm-4" for="unitprice">單價:</label>
                   <div class="col-sm-10">
-                    <input type="text" class="form-control" id="untiprice">
+                    <input type="text" class="form-control" id="unitprice">
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="control-label col-sm-4" for="unitname">單位:</label>
                   <div class="col-sm-10">
                     <input type="text" class="form-control" id="unitname">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-2">備註:</label>
+                  <div class="col-sm-10">
+                    <input type="text" class="form-control" id="add-remark">
                   </div>
                 </div>
               </form>
@@ -277,8 +292,9 @@
       $('.deleteContent').hide();
       $('#sub_project_id').val($(this).data('id'));
       $('#sub_project_name').val($(this).data('name'));
-      $('#unti_price').val($(this).data('untiprice'));
-      $('#unti').val($(this).data('unti'));
+      $('#unit_price').val($(this).data('unitprice'));
+      $('#unit').val($(this).data('unit'));
+      $('#remark').val($(this).data('remark'));
       $('#editSubProject').modal('show');
   });
   // 更新子項目
@@ -289,8 +305,9 @@
       data: {
         'id': $("#sub_project_id").val(),
         'name': $('#sub_project_name').val(),
-        'unti_price': $('#unti_price').val(),
-        'unti': $('#unti').val()
+        'unit_price': $('#unit_price').val(),
+        'unit': $('#unit').val(),
+        'remark': $('#remark').val()
       },
       success: function(resp) {
         swal({
@@ -374,8 +391,9 @@
       data: {
         'project_id': $(".select-engineering").val(),
         'sub_project_name': $("#subproject_name").val(),
-        'unti_price': $("#untiprice").val(),
-        'unti': $("#unitname").val()
+        'unit_price': $("#unitprice").val(),
+        'unit': $("#unitname").val(),
+        'remark': $("#add-remark").val()
       },
       success: function(resp) {
         swal({
@@ -481,13 +499,16 @@
 .subproject-title {
   background-color: #a6c7e8;
 }
+.remark {
+  width: 10%;
+}
 .project-name {
   width: 50%;
 }
-.unti_price {
+.unit_price {
   width: 15%;
 }
-.unti {
+.unit {
   width: 10%;
 }
 .edit-project-name {

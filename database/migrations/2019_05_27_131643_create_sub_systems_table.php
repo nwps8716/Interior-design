@@ -21,6 +21,7 @@ class CreateSubSystemsTable extends Migration
             $table->mediumInteger('unit_price')->comment('系統子項目單價');
             $table->string('unit', 32)->comment('系統子項目單位');
             $table->unsignedInteger('system_id')->comment('系統大項目ID');
+            $table->string('remark', 255)->comment('備註');
         });
     }
 

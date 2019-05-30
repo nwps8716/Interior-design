@@ -61,19 +61,20 @@
       <table class="table table-striped">
         <thead>
           <tr class="subproject-title">
+            <td >備註</td>
             <td >項目</td>
             <td >單價</td>
             <td >數量</td>
             <td >小記</td>
             <td >尚餘空間</td>
             <td >單位</td>
-            <td >備註</td>
           </tr>
         </thead>
         @foreach($list[$id] as $sub_name)
           <tbody>
+            <td class="remark-td">{{$sub_name['remark']}}</td>
             <td class="project-name-td">{{$sub_name['sub_project_name']}}</td>
-            <td class="unti_price-td">{{$sub_name['unti_price']}}</td>
+            <td class="unit_price-td">{{$sub_name['unit_price']}}</td>
             <td class="number-td">
               <input
                 type="number"
@@ -84,19 +85,18 @@
                 max="999">
             </td>
             <td class="sub_total-td">
-              {{number_format($sub_name['unti_price'] * $sub_name['number'], 2)}}
+              {{number_format($sub_name['unit_price'] * $sub_name['number'], 2)}}
             </td>
             <td class="free_space-td">
-              @if(number_format($total_info['remaining_money'] / $sub_name['unti_price'], 2) < 0)
+              @if(number_format($total_info['remaining_money'] / $sub_name['unit_price'], 2) < 0)
                 <span style="color:red">
-                  {{number_format($total_info['remaining_money'] / $sub_name['unti_price'], 2)}}
+                  {{number_format($total_info['remaining_money'] / $sub_name['unit_price'], 2)}}
                 </span>
               @else
-                {{number_format($total_info['remaining_money'] / $sub_name['unti_price'], 2)}}
+                {{number_format($total_info['remaining_money'] / $sub_name['unit_price'], 2)}}
               @endif
             </td>
-            <td class="unti-td">{{$sub_name['unti']}}</td>
-            <td class="remark-td">{{$sub_name['remark']}}</td>
+            <td class="unit-td">{{$sub_name['unit']}}</td>
           </tbody>
         @endforeach
       </table><br>
@@ -170,16 +170,7 @@
               timer: 1500,
             });
           } else {
-            swal({
-              title: "Success",
-              text: "修改成功！",
-              icon: "success",
-              buttons: false,
-              timer: 1500,
-            })
-            .then(() => {
-              location.reload(true);
-            });
+            location.reload(true);
           }
         }
       });
@@ -235,22 +226,25 @@
 .subproject-title {
   background-color: #a6c7e8;
 }
-.project-name-td {
-  width: 40%;
-}
-.unti_price-td {
+.remark-td {
   width: 8%;
+}
+.project-name-td {
+  width: 25%;
+}
+.unit_price-td {
+  width: 1%;
 }
 .number-td {
-  width: 8%;
+  width: 1%;
 }
 .sub_total-td {
-  width: 10%;
+  width: 7%;
 }
 .free_space-td {
-  width: 12%;
+  width: 7%;
 }
-.unti-td {
+.unit-td {
   width: 5%;
 }
 /* 去除webkit中input的type="number"時出現的上下圖標 */
@@ -260,6 +254,7 @@ input::-webkit-inner-spin-button {
 }
 .subproject-num {
   border-radius: 6px;
+  width: 60px;
 }
 </style>
 @endsection
