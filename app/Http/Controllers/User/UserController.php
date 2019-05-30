@@ -143,4 +143,53 @@ class UserController extends Controller
         toast('新增帳號成功，請重新登入!!','success','top-right');
         return redirect('login');
     }
+
+    /**
+     * 修改使用者密碼
+     *
+     * @return boolean
+     */
+    public function putUserPassword(
+        Request $_oRequest,
+        UserModle $_oUserModel
+    )
+    {
+        $aUserList = [];
+
+        $sPassword = $_oRequest->input('password');
+        $sRePassword = $_oRequest->input('re_password');
+
+        if (!$_oRequest->session()->has('login_user_info')){
+            toast('使用者已被登出！！','error','top-right');
+            return redirect('login');
+        }
+
+        ## 簡易判斷
+        if (($sPassword !== $sRePassword) || empty($sPassword) || empty($sRePassword)) {
+            toast('密碼or確認密碼錯誤,請重新輸入','error','top-right');
+            return redirect()->back();
+        }
+
+        ## 使用者登入資訊
+        $aUserInfo = $_oRequest->session()->get('login_user_info');
+
+        ## 密碼簡易加密
+        $sHashPassword = Hash::make($sPassword, [
+            'memory' => 1024,
+            'time' => 2,
+            'threads' => 2,
+        ]);
+
+        try {
+            ## 修改使用者密碼
+            $_oUserModel->updateOrCreate(
+                ['user_name' => $aUserInfo['user_name']],
+                ['password' => $sHashPassword]
+            );
+        } catch (\Exception $e) {
+            return response()->json(['result' => false]);
+        }
+
+        return response()->json(['result' => true]);
+    }
 }
