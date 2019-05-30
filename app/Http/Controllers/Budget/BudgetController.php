@@ -91,21 +91,17 @@ class BudgetController extends Controller
             $iSubProjectNum = (isset($aUserBudget[$aValue['sub_project_id']])) ?
                 $aUserBudget[$aValue['sub_project_id']]['sub_project_number'] : 0;
 
-            ## 備註
-            $sRemark = (isset($aUserBudget[$aValue['sub_project_id']])) ?
-                $aUserBudget[$aValue['sub_project_id']]['remark'] : '';
-
             $aResult[$aValue['project_id']][] = [
                 'sub_project_id' => $aValue['sub_project_id'],
                 'sub_project_name' => $aValue['sub_project_name'],
-                'unti_price' => $aValue['unti_price'],
-                'unti' => $aValue['unti'],
+                'unit_price' => $aValue['unit_price'],
+                'unit' => $aValue['unit'],
                 'number' => $iSubProjectNum,
-                'remark' => $sRemark
+                'remark' => $aValue['remark']
             ];
 
             ## 總小記
-            $iSubTotal += ($iSubProjectNum * $aValue['unti_price']);
+            $iSubTotal += ($iSubProjectNum * $aValue['unit_price']);
         }
 
         ## 總預算資料

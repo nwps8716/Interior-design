@@ -53,8 +53,9 @@ class UnitPriceController extends Controller
             $aResult[$aValue['project_id']][] = [
                 'sub_project_id' => $aValue['sub_project_id'],
                 'sub_project_name' => $aValue['sub_project_name'],
-                'unti_price' => $aValue['unti_price'],
-                'unti' => $aValue['unti']
+                'unit_price' => $aValue['unit_price'],
+                'unit' => $aValue['unit'],
+                'remark' => $aValue['remark']
             ];
         }
 
@@ -81,15 +82,17 @@ class UnitPriceController extends Controller
 
         $iProjectID = (int) $_oRequest->input('project_id');
         $sSubProjectName = $_oRequest->input('sub_project_name');
-        $iUntiPrice = (int) $_oRequest->input('unti_price');
-        $sUnti = $_oRequest->input('unti');
+        $iUnitPrice = (int) $_oRequest->input('unit_price');
+        $sUnit = $_oRequest->input('unit');
+        $sRemark = $_oRequest->input('remark');
 
         $bResult = $_oSubEngineeringModle->insert(
             [
                 'sub_project_name' => $sSubProjectName,
                 'project_id' => $iProjectID,
-                'unti_price' => $iUntiPrice,
-                'unti' => $sUnti
+                'unit_price' => $iUnitPrice,
+                'unit' => $sUnit,
+                'remark' => $sRemark
             ]
         );
 
@@ -113,8 +116,9 @@ class UnitPriceController extends Controller
 
         $iSubProjectID = (int) $_oRequest->input('id');
         $sSubProjectName = $_oRequest->input('name');
-        $iUntiPrice = (int) $_oRequest->input('unti_price');
-        $sUnti = $_oRequest->input('unti');
+        $iUnitPrice = (int) $_oRequest->input('unit_price');
+        $sUnit = $_oRequest->input('unit');
+        $sRemark = $_oRequest->input('remark');
 
         ## 更新工程子項目
         $bResult = $_oSubEngineeringModle
@@ -122,8 +126,9 @@ class UnitPriceController extends Controller
             ->update(
                 [
                     'sub_project_name' => $sSubProjectName,
-                    'unti_price' => $iUntiPrice,
-                    'unti' => $sUnti,
+                    'unit_price' => $iUnitPrice,
+                    'unit' => $sUnit,
+                    'remark' => $sRemark,
                 ]
             );
 
