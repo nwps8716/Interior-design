@@ -83,7 +83,7 @@ class BudgetController extends Controller
         $aUserBudget = $_oUserBudgetModle
             ->select('sub_project_id', 'sub_project_number', 'remark')
             ->where('user_name', $aUserInfo['user_name'])
-            ->where('budget_id', $iLevel)
+            ->where('level_id', $iLevel)
             ->get()
             ->keyBy('sub_project_id')
             ->toArray();
@@ -177,7 +177,7 @@ class BudgetController extends Controller
 
         $oResult = $_oUserBudgetModle
             ->where('user_name', $aUserInfo['user_name'])
-            ->where('budget_id', $_iLevelID)
+            ->where('level_id', $_iLevelID)
             ->delete();
 
         return response()->json(['result' => true]);

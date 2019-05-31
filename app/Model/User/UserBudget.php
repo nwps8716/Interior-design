@@ -11,7 +11,7 @@ class UserBudget extends Model
     protected $fillable = [
         'id',
         'user_name',
-        'budget_id',
+        'level_id',
         'sub_project_id',
         'sub_project_number',
         'remark',
@@ -43,7 +43,7 @@ class UserBudget extends Model
             $oResult = $this->updateOrCreate(
                [
                     'user_name' => $_sUserName,
-                    'budget_id' => $_iBudgetID,
+                    'level_id' => $_iBudgetID,
                     'sub_project_id' => $_iSubProjectID
                 ],
                 [
