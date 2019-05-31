@@ -155,10 +155,11 @@
     } else if (subproject_number !== default_value) {
       $.ajax({
         type: 'put',
-        url: '/engineering/budget/' + level_id,
+        url: '/user/budget/' + level_id,
         data: {
           'sub_project_id': subproject_id,
-          'sub_project_number': subproject_number
+          'sub_project_number': subproject_number,
+          'category_id': 1
         },
         success: function(resp) {
           if (resp.result === false) {
@@ -181,7 +182,10 @@
     var level_id = $(".level").val();
     $.ajax({
         type: 'delete',
-        url: '/engineering/budget/' + level_id,
+        url: '/user/budget/' + level_id,
+        data: {
+          'category_id': 1
+        },
         success: function(resp) {
           if (resp.result === true) {
             swal({
