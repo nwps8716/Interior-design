@@ -29,10 +29,6 @@ Route::delete('/engineering', 'UnitPrice\UnitPriceController@deleteEngineering')
 Route::post('/subengineering', 'UnitPrice\UnitPriceController@createSubEngineering');
 Route::put('/subengineering', 'UnitPrice\UnitPriceController@putSubEngineering');
 Route::delete('/subengineering', 'UnitPrice\UnitPriceController@deleteSubEngineering');
-## 工程預算
-Route::get('/engineering/budget', 'Budget\BudgetController@getEngineering');
-Route::put('/engineering/budget/{budget_id}', 'Budget\BudgetController@putUserEngineering');
-Route::delete('/engineering/budget/{budget_id}', 'Budget\BudgetController@deleteUserEngineering');
 ## 系統單價
 Route::get('/system/unitprice', 'UnitPrice\UnitPriceController@getSystemList');
 Route::post('/system', 'UnitPrice\UnitPriceController@createSystem');
@@ -41,10 +37,15 @@ Route::delete('/system', 'UnitPrice\UnitPriceController@deleteSystem');
 Route::post('/subsystem', 'UnitPrice\UnitPriceController@createSubSystem');
 Route::put('/subsystem', 'UnitPrice\UnitPriceController@putSubSystem');
 Route::delete('/subsystem', 'UnitPrice\UnitPriceController@deleteSubSystem');
+## 工程預算
+Route::get('/engineering/budget', 'Budget\BudgetController@getEngineering');
 ## 好禮贈送
 Route::get('/system/free_gift', 'Budget\BudgetController@getFreeGift');
 ## 系統預算
 Route::get('/system/budget', 'Budget\BudgetController@getSystem');
+## 工程、系統、好禮共用
+Route::put('/user/budget/{level_id}', 'Budget\BudgetController@putUserBudget');
+Route::delete('/user/budget/{level_id}', 'Budget\BudgetController@deleteUserBudget');
 ## 坪數估價
 Route::get('/pings', 'Pings\PingsController@index');
 Route::get('/pings/{pings}/trial/amount', 'Pings\PingsController@getTrialAmount');
