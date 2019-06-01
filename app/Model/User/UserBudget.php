@@ -47,7 +47,8 @@ class UserBudget extends Model
                [
                     'user_name' => $_sUserName,
                     'level_id' => $_iBudgetID,
-                    'sub_project_id' => $_iSubProjectID
+                    'sub_project_id' => $_iSubProjectID,
+                    'category_id' => $_iCategoryID
                 ],
                 [
                     'sub_project_number' => $_iSubProjectNumber,
