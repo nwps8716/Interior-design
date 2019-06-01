@@ -212,7 +212,7 @@
   margin: 0px 0px 0px 10px;
 }
 .reset-budget {
-  float:right;
+  float: right;
 }
 .table th, .table td {
   border: 1px solid #dee2e6;

@@ -101,13 +101,13 @@ class PingsController extends Controller
         ## 修改工程預算
         $_oPingsModle->updateOrCreate(
             ['name' => '工程預算'], 
-            ['id' => 1, 'name' => '工程預算', 'numerical_value' => $iEngineering_budget]
+            ['name' => '工程預算', 'numerical_value' => $iEngineering_budget]
         );
 
         ## 修改系統預算
         $_oPingsModle->updateOrCreate(
             ['name' => '系統預算'], 
-            ['id' => 2, 'name' => '系統預算', 'numerical_value' => $iSystem_budget]
+            ['name' => '系統預算', 'numerical_value' => $iSystem_budget]
         );
 
         ## 修改級距坪數價格
@@ -140,6 +140,17 @@ class PingsController extends Controller
 
         ## 使用者登入資訊
         $aUserInfo = $_oRequest->session()->get('login_user_info');
+        
+        ## 清除並重新設定使用者資訊
+        $_oRequest->session()->flush();
+        $_oRequest->session()->put(
+            'login_user_info',
+            [
+                'user_name' => $aUserInfo['user_name'],
+                'level' => $aUserInfo['level'],
+                'pings' => $iPings
+            ]
+        );
 
         ## 修改使用者坪數設定
         $_oUserModle->updateOrCreate(

@@ -19,7 +19,7 @@
         </select>
         <input type="submit" name="search" id="search" class="search btn btn-primary" value="查詢"/>
         <button
-          id="reset-budget"
+          id="resetBudget-btn"
           class="reset-budget btn btn-danger"
           data-toggle="modal"
           data-target="#resetBudget">
@@ -122,14 +122,90 @@
 @section('script')
 @parent
 <script>
+  // 查詢其他級距工程預算表
+  $('.search-level').on('click', '.search', function() {
+    var levelID = $(".level").val();
+    window.location.href = window.location.origin + '/system/budget?level_id=' + levelID;
+  });
+  // 更改數量
+  $('.subsystem-num').change(function (event) {
+    event.preventDefault();
+    var subproject_number = event.target.value;
+    var subproject_id = event.target.id;
+    var level_id = $(".level").val();
+    var default_value = event.target.defaultValue;
+    if (subproject_number == '' || subproject_number < 0) {
+      swal({
+        title: "Error",
+        text: "請輸入有效的數字",
+        icon: "error",
+        buttons: false,
+        timer: 1500,
+      })
+      .then(() => {
+        event.target.value = event.target.defaultValue;
+      });
+    } else if (subproject_number !== default_value) {
+      $.ajax({
+        type: 'put',
+        url: '/user/budget/' + level_id,
+        data: {
+          'sub_project_id': subproject_id,
+          'sub_project_number': subproject_number,
+          'category_id': 2
+        },
+        success: function(resp) {
+          if (resp.result === false) {
+            swal({
+              title: "Error",
+              text: "修改失敗！",
+              icon: "error",
+              buttons: false,
+              timer: 1500,
+            });
+          } else {
+            location.reload(true);
+          }
+        }
+      });
+    }
+  });
+  // 還原使用者該級距的數量設定
+  $('#resetBudget-btn').on('click', function() {
+    var level_id = $(".level").val();
+    $.ajax({
+        type: 'delete',
+        url: '/user/budget/' + level_id,
+        data: {
+          'category_id': 2
+        },
+        success: function(resp) {
+          if (resp.result === true) {
+            swal({
+              title: "Success",
+              text: "還原成功！",
+              icon: "success",
+              buttons: false,
+              timer: 1500,
+            })
+            .then(() => {
+              location.reload(true);
+            });
+          }
+        }
+      });
+  });
 </script>
 @endsection
 
 @section('style')
 @parent
 <style>
+.search {
+  margin: 0px 0px 0px 10px;
+}
 .reset-budget {
-  float:right;
+  float: right;
 }
 .table th, .table td {
   border: 1px solid #dee2e6;

@@ -25,6 +25,17 @@ class BudgetController extends Controller
         5 => 'E',
         6 => 'F'
     ];
+    ## 預設級距價格
+    private $aDefaultSpacePrice = [
+        '工程預算' => 45,
+        '系統預算' => 55,
+        'A級工程' => 50,
+        'B級工程' => 50,
+        'C級工程' => 50,
+        'D級工程' => 50,
+        'E級工程' => 50,
+        'F級工程' => 50,
+    ];
 
     /**
      * 取得裝潢工程預算表
@@ -139,7 +150,7 @@ class BudgetController extends Controller
     )
     {
         $iSubTotal = $iTotal = 0;
-        $aFreeGiftList = $aFreeGift = [];
+        $aFreeGiftList = $aFreeGift = $aSystem = $aResult = [];
         $iLevel = (int) $_oRequest->input('level_id', 1);
 
         ## 判斷使用者權限
@@ -169,13 +180,15 @@ class BudgetController extends Controller
             ->sortBy('sort')
             ->toArray();
 
-        $aSystem[$aFreeGift[0]['system_id']] = $aFreeGift[0]['system_name'];
+        if (!empty($aFreeGift)) {
+            $aSystem[$aFreeGift[0]['system_id']] = $aFreeGift[0]['system_name'];
+            ## 取得好禮贈送子項目
+            $aFreeGiftList = $_oSubSystemModle
+                ->where('system_id', $aFreeGift[0]['system_id'])
+                ->get()
+                ->toArray();
+        }
 
-        ## 取得好禮贈送子項目
-        $aFreeGiftList = $_oSubSystemModle
-            ->where('system_id', $aFreeGift[0]['system_id'])
-            ->get()
-            ->toArray();
 
         ## 取得使用者設定的裝潢工程級距詳細資料
         $aUserBudget = $_oUserBudgetModle
@@ -237,10 +250,12 @@ class BudgetController extends Controller
         PingsModle $_oPingsModle,
         UserModle $_oUserModle,
         SystemModle $_oSystemModle,
-        SubSystemModle $_oSubSystemModle
+        SubSystemModle $_oSubSystemModle,
+        UserBudgetModle $_oUserBudgetModle
     )
     {
-        $iSubTotal = 0;
+        $iTotal = $iSubTotal = 0;
+        $aTotalData = $aSystem = $aResult = [];
 
         ## 判斷使用者權限
         if ($this->checkSession($_oRequest, true) !== 'success') {
@@ -260,14 +275,6 @@ class BudgetController extends Controller
             $iLevel,
             '系統預算'
         );
-        ## 取得系統牌價
-        $iTotal = $this->countSystemCardAndDiscount($iSystemPrice);
-        ## 總預算資料
-        $aTotalData = [
-            'total' => $iTotal,
-            'sub_total' => $iSubTotal,
-            'remaining_money' => $iTotal - $iSubTotal,
-        ];
 
         ## 取得系統主項目列表
         $aSystem = $_oSystemModle
@@ -287,8 +294,22 @@ class BudgetController extends Controller
             ->get()
             ->toArray();
 
+        ## 取得使用者設定的裝潢工程級距詳細資料
+        $aUserBudget = $_oUserBudgetModle
+            ->select('sub_project_id', 'sub_project_number', 'remark')
+            ->where('user_name', $aUserInfo['user_name'])
+            ->where('level_id', $iLevel)
+            ->where('category_id', 2)
+            ->get()
+            ->keyBy('sub_project_id')
+            ->toArray();
+
         ## 整理資料
         foreach ($aSubSystem as $iKey => $aValue) {
+            ## 子項目數量
+            $iSubProjectNum = (isset($aUserBudget[$aValue['sub_system_id']])) ?
+                $aUserBudget[$aValue['sub_system_id']]['sub_project_number'] : 0;
+
             $aResult[$aValue['system_id']][$aValue['general_name']][] = [
                 'sub_system_id' => $aValue['sub_system_id'],
                 'general_name' => $aValue['general_name'],
@@ -296,11 +317,24 @@ class BudgetController extends Controller
                 'format' => $aValue['format'],
                 'unit_price' => $aValue['unit_price'],
                 'unit' => $aValue['unit'],
-                'number' => 0,
+                'number' => $iSubProjectNum,
                 'remark' => $aValue['remark']
             ];
+
+            ## 總小記
+            $iSubTotal += ($iSubProjectNum * $aValue['unit_price']);
         }
 
+        ## 取得系統牌價
+        $iTotal = $this->countSystemCardAndDiscount($iSystemPrice);
+
+        ## 總預算資料
+        $aTotalData = [
+            'total' => $iTotal,
+            'sub_total' => $iSubTotal,
+            'remaining_money' => $iTotal - $iSubTotal,
+        ];
+        
         return view('budget/system', [
             'spacing' => $this->aSpacing,
             'level_id' => $iLevel,
@@ -404,6 +438,10 @@ class BudgetController extends Controller
             ->get()
             ->pluck('numerical_value', 'name')
             ->toArray();
+
+        if (empty($aPings)) {
+            $aPings = $this->aDefaultSpacePrice;
+        }
 
         $sLevelName = $this->aSpacing[$_iLevel] . '級工程';
         ## 取得該坪數的每坪金額
