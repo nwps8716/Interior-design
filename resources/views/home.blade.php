@@ -9,7 +9,7 @@
   <meta name="author" content="">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <title>窩百態室內裝潢</title>
+  <title>窩百態系統家具</title>
   @section('style')
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
   @show
@@ -23,11 +23,13 @@
 
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
-      <div class="sidebar-heading"><a href="/home" class="list-group-item-action">室內裝潢-後台</a></div>
+      <div class="sidebar-heading"><a href="/home" class="list-group-item-action">窩百態系統</a></div>
       <div class="list-group list-group-flush">
         <a href="/pings" class="list-group-item list-group-item-action bg-light">坪數估價</a>
-        <a href="/engineering/unitprice" class="list-group-item list-group-item-action bg-light">工程單價</a>
-        <a href="/system/unitprice" class="list-group-item list-group-item-action bg-light">系統單價</a>
+        @if(Session::get('login_user_info')['level'] < 3)
+          <a href="/engineering/unitprice" class="list-group-item list-group-item-action bg-light">工程單價</a>
+          <a href="/system/unitprice" class="list-group-item list-group-item-action bg-light">系統單價</a>
+        @endif
         <a href="/engineering/budget" class="list-group-item list-group-item-action bg-light">裝潢工程預算表</a>
         <a href="/system/budget" class="list-group-item list-group-item-action bg-light">系統工程預算表</a>
         <a href="/system/free_gift" class="list-group-item list-group-item-action bg-light">好禮贈送表</a>
@@ -97,7 +99,7 @@
 
       <div class="container-fluid">
         @section('feature')
-          <h1 class='content-title'>歡迎使用窩百態後台</h1>
+          <h1 class='content-title'>歡迎使用窩百態系統</h1>
         @show
         @section('content')
         @show
