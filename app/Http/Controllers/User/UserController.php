@@ -57,6 +57,7 @@ class UserController extends Controller
             [
                 'user_name' => $sUserName,
                 'level' => $aUserList[0]['level'],
+                'pings' => $aUserList[0]['pings']
             ]
         );
 

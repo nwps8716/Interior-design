@@ -39,10 +39,9 @@
 
     <!-- Page Content -->
     <div id="page-content-wrapper">
-
       <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <button class="btn btn-primary" id="menu-toggle">選單</button>
-
+        <h5>使用者目前設定之坪數: {{ Session::get('login_user_info')['pings'] }}</h5>
+        
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -69,33 +68,33 @@
         </div>
       </nav>
 
-  <!-- 修改密碼 -->
-  <div id="putPassword" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="putPasswordLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" class="putPasswordLabel">修改密碼</h5>
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-              <div class="put-password-div">
-                <div style="margin-bottom: 6px;">
-                  密碼:
-                  <input type="password" name="password" id="password"/>
+      <!-- 修改密碼 -->
+      <div id="putPassword" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="putPasswordLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" class="putPasswordLabel">修改密碼</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              <div class="modal-body">
+                <div class="put-password-div">
+                  <div style="margin-bottom: 6px;">
+                    密碼:
+                    <input type="password" name="password" id="password"/>
+                  </div>
+                  <div style="margin-bottom: 6px;">
+                    密碼確認:
+                    <input type="password" name="re_password" id="re_password"/>
+                  </div>
                 </div>
-                <div style="margin-bottom: 6px;">
-                  密碼確認:
-                  <input type="password" name="re_password" id="re_password"/>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                  <button id="edit-password-btn" type="button" class="btn btn-success" data-dismiss="modal">確定修改</button>
                 </div>
               </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <button id="edit-password-btn" type="button" class="btn btn-success" data-dismiss="modal">確定修改</button>
-              </div>
             </div>
-          </div>
+        </div>
       </div>
-  </div>
 
       <div class="container-fluid">
         @section('feature')
@@ -124,11 +123,6 @@
       headers: {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       }
-    });
-    // 選單收合
-    $("#menu-toggle").click(function(e) {
-      e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
     });
     // 修改工程分類項目
     $('.modal-footer').on('click', '#edit-password-btn', function() {
@@ -163,8 +157,8 @@ body {
 }
 
 #sidebar-wrapper {
+  margin-left: 0;
   min-height: 100vh;
-  margin-left: -15rem;
   -webkit-transition: margin .25s ease-out;
   -moz-transition: margin .25s ease-out;
   -o-transition: margin .25s ease-out;
@@ -177,18 +171,19 @@ body {
 }
 
 #sidebar-wrapper .list-group {
-  width: 15rem;
+  width: 11rem;
 }
 
 #page-content-wrapper {
-  min-width: 100vw;
+  min-width: 0;
+  width: 100%;
 }
 
 #wrapper.toggled #sidebar-wrapper {
-  margin-left: 0;
+  margin-left: -11rem;
 }
 
-@media (min-width: 768px) {
+/* @media (min-width: 768px) {
   #sidebar-wrapper {
     margin-left: 0;
   }
@@ -199,6 +194,6 @@ body {
   #wrapper.toggled #sidebar-wrapper {
     margin-left: -15rem;
   }
-}
+} */
 </style>
 </html>
