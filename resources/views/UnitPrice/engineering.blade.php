@@ -1,7 +1,7 @@
 @extends('home')
 
 @section('feature')
-  <div>
+  <div class="project-menu-title">
       <h1 class='content-title'>工程單價列表</h1>
       <button
         id="add-project"
@@ -470,6 +470,9 @@
 @section('style')
 @parent
 <style>
+.project-menu-title {
+  position: relative;
+}
 .sub_project_name {
   color: red;
 }
@@ -478,16 +481,24 @@
   width: 200px;
 }
 .add-project {
-  margin: 0px 10px 10px 0px;
+  position: absolute;
+  top: 13px;
+  left: 230px;
 }
 .add-sub-project {
-  margin: 0px 10px 10px 0px;
+  position: absolute;
+  top: 13px;
+  left: 352px;
 }
 .project-set {
-  margin: 0px 10px 10px 0px;
+  position: absolute;
+  top: 13px;
+  left: 489px;
 }
 .project-delete {
-  margin: 0px 10px 10px 0px;
+  position: absolute;
+  top: 13px;
+  left: 610px;
 }
 .project-title {
   color: white;

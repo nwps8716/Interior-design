@@ -63,6 +63,7 @@
             <thead>
               <tr class="subsystem-list-title">
                 <td>統稱</td>
+                <td>備註</td>
                 <td>內容物</td>
                 <td>規格</td>
                 <td>單價</td>
@@ -81,6 +82,7 @@
                     @elseif (count($general) <= 1)
                       <td class="general_name">{{$sub_name['general_name']}}</td>
                     @endif
+                    <td class="remark-td">{{$sub_name['remark']}}</td>
                     <td class="system_name">{{$sub_name['sub_system_name']}}</td>
                     <td class="format">{{$sub_name['format']}}</td>
                     <td class="unit_price">{{$sub_name['unit_price']}}</td>

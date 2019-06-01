@@ -28,9 +28,9 @@ class PingsController extends Controller
     {
         $aLevelPings =[];
 
-        if (!$_oRequest->session()->has('login_user_info')){
-            toast('使用者已被登出！！','error','top-right');
-            return redirect('login');
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, true) !== 'success') {
+            return redirect($this->checkSession($_oRequest, true));
         }
 
         ## 使用者登入資訊
@@ -65,9 +65,9 @@ class PingsController extends Controller
     {
         $aLevelPings = [];
 
-        if (!$_oRequest->session()->has('login_user_info')){
-            toast('使用者已被登出！！','error','top-right');
-            return redirect('login');
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, true) !== 'success') {
+            return redirect($this->checkSession($_oRequest, true));
         }
 
         ## 取得每隔級距的坪數設定
@@ -131,9 +131,9 @@ class PingsController extends Controller
      */
     public function editUserPings(Request $_oRequest, UserModle $_oUserModle)
     {
-        if (!$_oRequest->session()->has('login_user_info')){
-            toast('使用者已被登出！！','error','top-right');
-            return redirect('login');
+        ## 判斷使用者權限
+        if ($this->checkSession($_oRequest, true) !== 'success') {
+            return redirect($this->checkSession($_oRequest, true));
         }
 
         $iPings = (int) $_oRequest->input('pings');

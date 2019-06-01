@@ -3,8 +3,17 @@
 @section('feature')
   <div class="pings-title">
     <h1 class='content-title'>坪數估價</h1>
-    <button id="edit-enginner" type="button" class="system-btn btn btn-primary" data-toggle="modal" data-target="#exampleModal">級距坪數價格、預算％數設定</button>
     <button id="pings-set" type="button" class="pings-set-btn btn btn-primary">儲存當前試算坪數</button>
+    @if(Session::get('login_user_info')['level'] < 3)
+      <button
+        type="button"
+        id="edit-enginner"
+        class="system-btn btn btn-primary"
+        data-toggle="modal"
+        data-target="#exampleModal">
+          級距坪數價格、預算％數設定
+      </button>
+    @endif
   </div>
   <table class="table table-bordered table-striped pings-table">
     <thead class="thead-dark">
@@ -182,10 +191,12 @@
   .system-btn {
     position: absolute;
     top: 13px;
-    left: 160px;
+    left: 312px;
   }
   .pings-set-btn {
-    margin: 0px 10px 10px 0px;
+    position: absolute;
+    top: 13px;
+    left: 160px;
   }
   .pings-table,
   .level {

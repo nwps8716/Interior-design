@@ -325,7 +325,9 @@ class UnitPriceController extends Controller
 
         $sSystemName = $_oRequest->input('system_name');
 
+        ## 取得最後一個排序，但不能為好禮贈送999
         $iLastSort = $_oSystemModle
+            ->where('sort', '!=', '999')
             ->max('sort');
 
         $bResult = $_oSystemModle->insert(

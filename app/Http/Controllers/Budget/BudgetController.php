@@ -46,8 +46,8 @@ class BudgetController extends Controller
         $iLevel = (int) $_oRequest->input('level_id', 1);
 
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        if ($this->checkSession($_oRequest, true) !== 'success') {
+            return redirect($this->checkSession($_oRequest, true));
         }
 
         ## 使用者登入資訊
@@ -143,8 +143,8 @@ class BudgetController extends Controller
         $iLevel = (int) $_oRequest->input('level_id', 1);
 
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        if ($this->checkSession($_oRequest, true) !== 'success') {
+            return redirect($this->checkSession($_oRequest, true));
         }
 
         ## 使用者登入資訊
@@ -201,6 +201,7 @@ class BudgetController extends Controller
                 'unit_price' => $aValue['unit_price'],
                 'unit' => $aValue['unit'],
                 'number' => $iSubProjectNum,
+                'remark' => $aValue['remark']
             ];
 
             ## 總小記
@@ -242,8 +243,8 @@ class BudgetController extends Controller
         $iSubTotal = 0;
 
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        if ($this->checkSession($_oRequest, true) !== 'success') {
+            return redirect($this->checkSession($_oRequest, true));
         }
 
         $iLevel = (int) $_oRequest->input('level_id', 1);
@@ -296,6 +297,7 @@ class BudgetController extends Controller
                 'unit_price' => $aValue['unit_price'],
                 'unit' => $aValue['unit'],
                 'number' => 0,
+                'remark' => $aValue['remark']
             ];
         }
 
@@ -321,8 +323,8 @@ class BudgetController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        if ($this->checkSession($_oRequest, true) !== 'success') {
+            return redirect($this->checkSession($_oRequest, true));
         }
 
         ## 分類ID(工程：1、系統：2、好禮贈送：3)
@@ -357,8 +359,8 @@ class BudgetController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        if ($this->checkSession($_oRequest, true) !== 'success') {
+            return redirect($this->checkSession($_oRequest, true));
         }
 
         ## 分類ID(工程：1、系統：2、好禮贈送：3)
