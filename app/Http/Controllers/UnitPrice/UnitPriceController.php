@@ -59,7 +59,7 @@ class UnitPriceController extends Controller
             ];
         }
 
-        return view('unitprice/engineering', [
+        return view('engineering_unitprice', [
             'engineering' => $aEngineering,
             'sub_engineering' => $aResult
         ]);
@@ -302,7 +302,7 @@ class UnitPriceController extends Controller
             ];
         }
         
-        return view('unitprice/system', [
+        return view('system_unitprice', [
             'system' => $aSystem,
             'sub_system' => $aResult
         ]);
