@@ -126,7 +126,7 @@ class BudgetController extends Controller
             'remaining_money' => ($iAmount - $iSubTotal),
         ];
 
-        return view('budget/engineering', [
+        return view('engineering_budget', [
             'spacing' => $this->aSpacing,
             'level_id' => $iLevel,
             'total_info' => $aTotalData,
@@ -231,7 +231,7 @@ class BudgetController extends Controller
             'remaining_money' => $iTotal - $iSubTotal,
         ];
 
-        return view('budget/system_freegift', [
+        return view('system_freegift', [
             'spacing' => $this->aSpacing,
             'level_id' => $iLevel,
             'total_info' => $aTotalData,
@@ -335,7 +335,7 @@ class BudgetController extends Controller
             'remaining_money' => $iTotal - $iSubTotal,
         ];
         
-        return view('budget/system', [
+        return view('system_budget', [
             'spacing' => $this->aSpacing,
             'level_id' => $iLevel,
             'total_info' => $aTotalData,
