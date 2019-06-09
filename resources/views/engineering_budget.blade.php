@@ -13,7 +13,7 @@
             @if ($id == $level_id)
               selected="selected"
             @endif>
-            {{$name}}級裝潢工程預算
+            {{$name}}裝潢工程預算
           </option>
         @endforeach
       </select>
@@ -38,7 +38,7 @@
       <span>
         <thead>
           <tr class="">
-            <td>{{$spacing[$level_id]}}級裝潢工程總預算</td>
+            <td>{{$spacing[$level_id]}}裝潢工程總預算</td>
             <td class="num-td">${{number_format($total_info['total'], 2)}}</td>
             <td>小記</td>
             <td class="num-td">${{number_format($total_info['sub_total'], 2)}}</td>
@@ -109,12 +109,12 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-      <h5 class="modal-title" class="resetBudgetLabel">{{$spacing[$level_id]}}級裝潢工程預算 - 還原設定</h5>
+      <h5 class="modal-title" class="resetBudgetLabel">{{$spacing[$level_id]}}裝潢工程預算 - 還原設定</h5>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
         <div class="deleteContent">
-          確定要還原 "{{$spacing[$level_id]}}級裝潢工程預算 -> 數量" 設定嗎?
+          確定要還原 "{{$spacing[$level_id]}}裝潢工程預算 -> 數量" 設定嗎?
         </div>
       </div>
       <div class="modal-footer">

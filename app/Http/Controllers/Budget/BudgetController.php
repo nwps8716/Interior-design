@@ -11,6 +11,7 @@ use App\Model\UnitPrice\SubEngineering As SubEngineeringModle;
 use App\Model\UnitPrice\System As SystemModle;
 use App\Model\UnitPrice\SubSystem As SubSystemModle;
 use App\Model\User\UserBudget As UserBudgetModle;
+use App\Model\Appraisal\TotalBudget As TotalBudgetModle;
 use Alert;
 use Response;
 
@@ -18,12 +19,13 @@ class BudgetController extends Controller
 {
     ## 級距
     private $aSpacing = [
-        1 => 'A',
-        2 => 'B',
-        3 => 'C',
-        4 => 'D',
-        5 => 'E',
-        6 => 'F'
+        1 => 'A級',
+        2 => 'B級',
+        3 => 'C級',
+        4 => 'D級',
+        5 => 'E級',
+        6 => 'F級',
+        7 => 'Special1'
     ];
     ## 預設級距價格
     private $aDefaultSpacePrice = [
@@ -36,6 +38,8 @@ class BudgetController extends Controller
         'E級工程' => 50,
         'F級工程' => 50,
     ];
+    ## 特殊工程表
+    private $aSpecialLevelID = [7];
 
     /**
      * 取得裝潢工程預算表
@@ -48,7 +52,8 @@ class BudgetController extends Controller
         SubEngineeringModle $_oSubEngineeringModle,
         UserBudgetModle $_oUserBudgetModle,
         PingsModle $_oPingsModle,
-        UserModle $_oUserModle
+        UserModle $_oUserModle,
+        TotalBudgetModle $_oTotalBudgetModle
     )
     {
         $aResult = $aEngineeringList = $aUserBudget = [];
@@ -64,14 +69,23 @@ class BudgetController extends Controller
         ## 使用者登入資訊
         $aUserInfo = $_oRequest->session()->get('login_user_info');
 
-        ## 取得使用者級距
-        $iAmount = $this->getUserLevelPingsAmount(
-            $_oPingsModle,
-            $_oUserModle,
-            $aUserInfo['user_name'],
-            $iLevel,
-            '工程預算'
-        );
+        if (in_array($iLevel, $this->aSpecialLevelID)) {
+            ## 取得使用者特殊總預算資料
+            $aSpecialTotalAmount = $this->getUserSpecialTotalBudget(
+                $_oTotalBudgetModle,
+                $aUserInfo['user_name']
+            );
+            $iAmount = $aSpecialTotalAmount['engineering_total_budget'];
+        } else {
+            ## 取得使用者級距
+            $iAmount = $this->getUserLevelPingsAmount(
+                $_oPingsModle,
+                $_oUserModle,
+                $aUserInfo['user_name'],
+                $iLevel,
+                '工程預算'
+            );
+        }
 
         ## 取得工程主項目列表
         $aEngineering = $_oEngineeringModle
@@ -146,7 +160,8 @@ class BudgetController extends Controller
         UserModle $_oUserModle,
         SystemModle $_oSystemModle,
         SubSystemModle $_oSubSystemModle,
-        UserBudgetModle $_oUserBudgetModle
+        UserBudgetModle $_oUserBudgetModle,
+        TotalBudgetModle $_oTotalBudgetModle
     )
     {
         $iSubTotal = $iTotal = 0;
@@ -161,17 +176,26 @@ class BudgetController extends Controller
         ## 使用者登入資訊
         $aUserInfo = $_oRequest->session()->get('login_user_info');
 
-        ## 取得使用者級距總預算
-        $iSystemPrice = $this->getUserLevelPingsAmount(
-            $_oPingsModle,
-            $_oUserModle,
-            $aUserInfo['user_name'],
-            $iLevel,
-            '系統預算'
-        );
+        if (in_array($iLevel, $this->aSpecialLevelID)) {
+            ## 取得使用者特殊總預算資料
+            $aSpecialTotalAmount = $this->getUserSpecialTotalBudget(
+                $_oTotalBudgetModle,
+                $aUserInfo['user_name']
+            );
+            $iTotal = $aSpecialTotalAmount['system_total_budget'];
+        } else {
+            ## 取得使用者級距總預算
+            $iSystemPrice = $this->getUserLevelPingsAmount(
+                $_oPingsModle,
+                $_oUserModle,
+                $aUserInfo['user_name'],
+                $iLevel,
+                '系統預算'
+            );
 
-        ## 取得系統牌價
-        $iTotal = $this->countSystemCardAndDiscount($iSystemPrice);
+            ## 取得系統牌價
+            $iTotal = $this->countSystemCardAndDiscount($iSystemPrice);
+        }
 
         ## 取得好禮贈送的SystemID
         $aFreeGift = $_oSystemModle
@@ -251,7 +275,8 @@ class BudgetController extends Controller
         UserModle $_oUserModle,
         SystemModle $_oSystemModle,
         SubSystemModle $_oSubSystemModle,
-        UserBudgetModle $_oUserBudgetModle
+        UserBudgetModle $_oUserBudgetModle,
+        TotalBudgetModle $_oTotalBudgetModle
     )
     {
         $iTotal = $iSubTotal = 0;
@@ -267,14 +292,26 @@ class BudgetController extends Controller
         ## 使用者登入資訊
         $aUserInfo = $_oRequest->session()->get('login_user_info');
 
-        ## 取得使用者級距總預算
-        $iSystemPrice = $this->getUserLevelPingsAmount(
-            $_oPingsModle,
-            $_oUserModle,
-            $aUserInfo['user_name'],
-            $iLevel,
-            '系統預算'
-        );
+        if (in_array($iLevel, $this->aSpecialLevelID)) {
+            ## 取得使用者特殊總預算資料
+            $aSpecialTotalAmount = $this->getUserSpecialTotalBudget(
+                $_oTotalBudgetModle,
+                $aUserInfo['user_name']
+            );
+            $iTotal = $aSpecialTotalAmount['system_total_budget'];
+        } else {
+            ## 取得使用者級距總預算
+            $iSystemPrice = $this->getUserLevelPingsAmount(
+                $_oPingsModle,
+                $_oUserModle,
+                $aUserInfo['user_name'],
+                $iLevel,
+                '系統預算'
+            );
+
+            ## 取得系統牌價
+            $iTotal = $this->countSystemCardAndDiscount($iSystemPrice);
+        }
 
         ## 取得系統主項目列表
         $aSystem = $_oSystemModle
@@ -325,9 +362,6 @@ class BudgetController extends Controller
             $iSubTotal += ($iSubProjectNum * $aValue['unit_price']);
         }
 
-        ## 取得系統牌價
-        $iTotal = $this->countSystemCardAndDiscount($iSystemPrice);
-
         ## 總預算資料
         $aTotalData = [
             'total' => $iTotal,
@@ -344,7 +378,7 @@ class BudgetController extends Controller
         ]);
     }
 
-    ## ========================= 共用Function =========================##
+    ## ========================= 共用Function ========================= ##
     /**
      * 修改使用者工程級距預算 - 子項目詳細設定
      *
@@ -412,6 +446,7 @@ class BudgetController extends Controller
         return response()->json(['result' => true]);
     }
 
+    ## ========================= 共用Function ========================= ##
     /**
      * 取得使用者級距坪數總預算
      * @param string $_sUserName  使用者登入名稱
@@ -443,7 +478,7 @@ class BudgetController extends Controller
             $aPings = $this->aDefaultSpacePrice;
         }
 
-        $sLevelName = $this->aSpacing[$_iLevel] . '級工程';
+        $sLevelName = $this->aSpacing[$_iLevel] . '工程';
         ## 取得該坪數的每坪金額
         $iLevelAmount = $aPings[$sLevelName];
 
@@ -488,5 +523,44 @@ class BudgetController extends Controller
         }
 
         return round($iCardPrice, 2);
+    }
+
+    /**
+     * 取得使用者特殊總預算資料
+     * @param string $_sUserName  使用者登入名稱
+     * @return array $aResult
+     */
+    private function getUserSpecialTotalBudget(
+        TotalBudgetModle $_oTotalBudgetModle,
+        $_sUserName
+    )
+    {
+        $aTotalBudget = [];
+
+        ## 預設值
+        $aResult = [
+            'engineering_total_budget' => 50000,
+            'system_total_budget' => 50000
+        ];
+
+        $aTotalBudget = $_oTotalBudgetModle
+            ->where('user_name', $_sUserName)
+            ->get()
+            ->toArray();
+
+        if (!empty($aTotalBudget)) {
+            $iTotal = $aTotalBudget[0]['total_budget'];
+            $fSystemDiscount = ($aTotalBudget[0]['system_discount'] == 0) ? 1 : $aTotalBudget[0]['system_discount'];
+
+            $iEngineeringTotalBudget = $iTotal * ($aTotalBudget[0]['engineering_budget'] / 100);
+            $iSystemTotalBudget = round($iTotal * ($aTotalBudget[0]['system_budget'] / 100) / $fSystemDiscount, 2);
+
+            $aResult = [
+                'engineering_total_budget' => $iEngineeringTotalBudget,
+                'system_total_budget' => $iSystemTotalBudget,
+            ];
+        }
+
+        return $aResult;
     }
 }
