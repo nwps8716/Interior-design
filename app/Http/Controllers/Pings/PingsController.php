@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Pings;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Model\Pings\Pings As PingsModle;
+use App\Model\Appraisal\Pings As PingsModle;
 use App\Model\Appraisal\TotalBudget As TotalBudgetModle;
 use App\Model\User\User As UserModle;
 use Alert;
