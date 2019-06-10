@@ -13,6 +13,9 @@
 Route::get('/', function () {
     return redirect('login');
 });
+Route::get('/noservice', function () {
+    return view('noservice');
+});
 
 Route::get('/home', 'HomeController@index');
 Route::get('/login', 'User\UserController@getLogin');
@@ -51,3 +54,4 @@ Route::get('/pings', 'Pings\PingsController@index');
 Route::get('/pings/{pings}/trial/amount', 'Pings\PingsController@getTrialAmount');
 Route::put('/pings/percent', 'Pings\PingsController@editPercent');
 Route::put('/user/pings', 'Pings\PingsController@editUserPings');
+Route::put('/user/total/budget', 'Pings\PingsController@editUserTotalBudget');

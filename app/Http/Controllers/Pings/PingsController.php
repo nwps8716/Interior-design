@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Pings;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Model\Pings\Pings As PingsModle;
+use App\Model\Appraisal\Pings As PingsModle;
+use App\Model\Appraisal\TotalBudget As TotalBudgetModle;
 use App\Model\User\User As UserModle;
 use Alert;
 
@@ -24,13 +25,22 @@ class PingsController extends Controller
      *
      * @return array
      */
-    public function index(Request $_oRequest, PingsModle $_oPingsModle, UserModle $_oUserModle)
+    public function index(
+        Request $_oRequest,
+        PingsModle $_oPingsModle,
+        TotalBudgetModle $_oTotalBudgetModle,
+        UserModle $_oUserModle
+    )
     {
-        $aLevelPings =[];
+        $aLevelPings = $aTotalBudget = [];
+        $iTotalBudget = 100000;
+        $iEngineeringBudget = $iSystemBudget = 50;
+        $fSystemDiscount = 0;
 
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, true) !== 'success') {
-            return redirect($this->checkSession($_oRequest, true));
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         ## 使用者登入資訊
@@ -47,12 +57,37 @@ class PingsController extends Controller
         ## 取得每隔級距的坪數設定
         $aLevelPings = $this->getLevelPingsSet($_oPingsModle, $iPings);
 
+        ## 取得使用者特殊總預算相關設定
+        $aTotalBudget = $_oTotalBudgetModle
+            ->where('user_name', $aUserInfo['user_name'])
+            ->get()
+            ->toArray();
+
+        if (!empty($aTotalBudget)) {
+            $iTotalBudget = $aTotalBudget[0]['total_budget'];
+            $iEngineeringBudget = $aTotalBudget[0]['engineering_budget'];
+            $iSystemBudget = $aTotalBudget[0]['system_budget'];
+            $fSystemDiscount = $aTotalBudget[0]['system_discount'];
+        }
+
+        ## 整理使用者特殊相關設定
+        $aSpecialTableData = $this->getSpecialTableSet(
+            $iTotalBudget,
+            $iEngineeringBudget,
+            $iSystemBudget,
+            $fSystemDiscount,
+            $aLevelPings['system_discount_switch']
+        );
+
         return view('pings', [
             'default_pings' => $iPings,
             'main_data' => $aLevelPings['main_data'],
             'engineering_budget' => $aLevelPings['engineering_budget'],
             'system_budget' => $aLevelPings['system_budget'],
-            'level_data' => $aLevelPings['level_data']
+            'level_data' => $aLevelPings['level_data'],
+            'special_data' => $aSpecialTableData,
+            'system_discount_switch' => $aLevelPings['system_discount_switch']
+
         ]);
     }
 
@@ -61,24 +96,49 @@ class PingsController extends Controller
      *
      * @return array
      */
-    public function getTrialAmount(Request $_oRequest, PingsModle $_oPingsModle, $_iPings)
+    public function getTrialAmount(
+        Request $_oRequest,
+        TotalBudgetModle $_oTotalBudgetModle,
+        PingsModle $_oPingsModle,
+        $_iPings
+    )
     {
-        $aLevelPings = [];
+        $aLevelPings = $aSpecialTableData = [];
 
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, true) !== 'success') {
-            return redirect($this->checkSession($_oRequest, true));
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
+
+        $iTotalBudget = (int) $_oRequest->input('total_budget');
+        $iEngineeringBudget = (int) $_oRequest->input('e_budget');
+        $iSystemBudget = (int) $_oRequest->input('s_budget');
+        $fSystemDiscount = (float) $_oRequest->input('system_discount');
+
+        ## 使用者登入資訊
+        $aUserInfo = $_oRequest->session()->get('login_user_info');
 
         ## 取得每隔級距的坪數設定
         $aLevelPings = $this->getLevelPingsSet($_oPingsModle, $_iPings);
+
+        ## 整理使用者特殊相關設定
+        $aSpecialTableData = $this->getSpecialTableSet(
+            ($iTotalBudget * 10000),
+            $iEngineeringBudget,
+            $iSystemBudget,
+            $fSystemDiscount,
+            $aLevelPings['system_discount_switch']
+        );
 
         return view('pings', [
             'default_pings' => $_iPings,
             'main_data' => $aLevelPings['main_data'],
             'engineering_budget' => $aLevelPings['engineering_budget'],
             'system_budget' => $aLevelPings['system_budget'],
-            'level_data' => $aLevelPings['level_data']
+            'level_data' => $aLevelPings['level_data'],
+            'special_data' => $aSpecialTableData,
+            'system_discount_switch' => $aLevelPings['system_discount_switch']
         ]);
     }
 
@@ -90,13 +150,21 @@ class PingsController extends Controller
     public function editPercent(Request $_oRequest, PingsModle $_oPingsModle)
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iEngineering_budget = (int) $_oRequest->input('engineering_budget');
         $iSystem_budget = (int) $_oRequest->input('system_budget');
         $aLevelPrice = (array) $_oRequest->input('level_price');
+        $iSystemDiscountSwitch = (int) $_oRequest->input('system_discount_switch');
+
+        ## 修改系統折數開關
+        $_oPingsModle->updateOrCreate(
+            ['name' => '系統折數開關'],
+            ['name' => '系統折數開關', 'numerical_value' => $iSystemDiscountSwitch]
+        );
 
         ## 修改工程預算
         $_oPingsModle->updateOrCreate(
@@ -132,8 +200,9 @@ class PingsController extends Controller
     public function editUserPings(Request $_oRequest, UserModle $_oUserModle)
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, true) !== 'success') {
-            return redirect($this->checkSession($_oRequest, true));
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iPings = (int) $_oRequest->input('pings');
@@ -162,6 +231,43 @@ class PingsController extends Controller
     }
 
     /**
+     * 修改使用者設定坪數
+     *
+     * @return boolean
+     */
+    public function editUserTotalBudget(Request $_oRequest, TotalBudgetModle $_oTotalBudgetModle)
+    {
+        ## 判斷使用者權限
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
+        }
+
+        $iTotalBudget = (int) $_oRequest->input('total_budget');
+        $iEngineeringBudget = (int) $_oRequest->input('e_budget');
+        $iSystemBudget = (int) $_oRequest->input('s_budget');
+        $fSystemDiscount = (float) $_oRequest->input('system_discount');
+
+        ## 使用者登入資訊
+        $aUserInfo = $_oRequest->session()->get('login_user_info');
+
+        ## 修改工程預算
+        $_oTotalBudgetModle->updateOrCreate(
+            ['user_name' => $aUserInfo['user_name']],
+            [
+                'user_name' => $aUserInfo['user_name'],
+                'total_budget' => $iTotalBudget * 10000,
+                'engineering_budget' => $iEngineeringBudget,
+                'system_budget' => $iSystemBudget,
+                'system_discount' => $fSystemDiscount
+            ]
+        );
+
+        return response()->json(['result' => true]);
+    }
+
+    ## ========================= 共用Function ========================= ##
+    /**
      * 取得每隔級距的坪數設定
      *
      * @return array
@@ -176,6 +282,7 @@ class PingsController extends Controller
 
         $iEngineering_budget = (empty($aPings['工程預算'])) ? 45 : (int) $aPings['工程預算'];
         $iSystem_budget = (empty($aPings['系統預算'])) ? 55 : (int) $aPings['系統預算'];
+        $iSystemDiscountSwitch = (empty($aPings['系統折數開關'])) ? (int) 0 : (int) $aPings['系統折數開關'];
 
         foreach ($this->level as $key => $level_name) {
             $sLevelName = $level_name . '級工程';
@@ -205,7 +312,8 @@ class PingsController extends Controller
             'main_data' => $aData,
             'engineering_budget' => $iEngineering_budget,
             'system_budget' => $iSystem_budget,
-            'level_data' => $aLevelData
+            'level_data' => $aLevelData,
+            'system_discount_switch' => $iSystemDiscountSwitch
         ];
     }
 
@@ -244,16 +352,16 @@ class PingsController extends Controller
             case ($iCardPrice < 200000):
                 $iDiscount = 0;
                 break;
-            case ($iCardPrice > 500000);
+            case ($iCardPrice >= 500000);
                 $iDiscount = 0.65;
                 break;
-            case ($iCardPrice > 400000);
+            case ($iCardPrice >= 400000);
                 $iDiscount = 0.75;
                 break;
-            case ($iCardPrice > 300000);
+            case ($iCardPrice >= 300000);
                 $iDiscount = 0.85;
                 break;
-            case ($iCardPrice > 200000);
+            case ($iCardPrice >= 200000);
                 $iDiscount = 0.95;
                 break;
             default:
@@ -261,10 +369,54 @@ class PingsController extends Controller
                 break;
         }
 
-
         return [
             'card_price' => round($iCardPrice, 2),
             'discount' => $iDiscount,
         ];
+    }
+
+    /**
+     * 取得使用者特殊相關設定
+     *
+     * @param  int    $_iTotslBudget          使用者總預算
+     * @param  int    $_iEngineeringBudget    使用者工程預算％數
+     * @param  int    $_iSystemBudget         使用者系統預算％數
+     * @param  string $_fSystemDiscount       使用者系統折數
+     * @param  int    $_iSystemDiscountSwitch 使用者系統折數開關
+     * @return array
+     */
+    private function getSpecialTableSet(
+        $_iTotalBudget,
+        $_iEngineeringBudget,
+        $_iSystemBudget,
+        $_fSystemDiscount,
+        $_iSystemDiscountSwitch
+    )
+    {
+        $aSystemDiscount = [];
+
+        ## 系統售價
+        $iSystemPrice = $_iTotalBudget * ($_iSystemBudget / 100);
+
+        ## 判斷是否可以修改折數
+        if ($_iSystemDiscountSwitch === 0) {
+            $aSystemDiscount = $this->countSystemCardAndDiscount($iSystemPrice);
+        } else {
+            $aSystemDiscount['card_price'] = ($_fSystemDiscount == 0) ?
+                $iSystemPrice : round($iSystemPrice / $_fSystemDiscount, 2);
+            $aSystemDiscount['discount'] = $_fSystemDiscount;
+        }
+
+        $aResult = [
+            'total_budget' => $_iTotalBudget / 10000,
+            'engineering_budget' => $_iEngineeringBudget,
+            'engineering_total_budget' => $_iTotalBudget * ($_iEngineeringBudget / 100),
+            'system_budget' => $_iSystemBudget,
+            'system_card_price' => $aSystemDiscount['card_price'],
+            'system_discount' => $aSystemDiscount['discount'],
+            'system_price' => $iSystemPrice,
+        ];
+
+        return $aResult;
     }
 }

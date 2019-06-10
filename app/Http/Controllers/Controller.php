@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use App\Model\User\WhiteIP As WhiteIPModle;
 
 class Controller extends BaseController
 {
@@ -21,8 +22,16 @@ class Controller extends BaseController
     {
         $aLoginUser = $_oRequest->session()->get('login_user_info');
 
+        ## 取得白名單
+        $aWhiteIP = WhiteIPModle::get()->pluck('ip')->toArray();
+
+        ## 判斷IP不在白名單內
+        if ($aLoginUser['level'] === 3 && !in_array($_SERVER['REMOTE_ADDR'], $aWhiteIP)) {
+            $_oRequest->session()->flush();
+            return 'noservice';
+
         ## 判斷使用者已被登出
-        if (empty($aLoginUser)) {
+        } else if (empty($aLoginUser)) {
             toast('使用者已被登出！！','error','top-right');
             return 'login';
 
@@ -34,4 +43,5 @@ class Controller extends BaseController
 
         return 'success';
     }
+
 }
