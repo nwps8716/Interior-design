@@ -61,6 +61,12 @@ class UserController extends Controller
             ]
         );
 
+        ## 判斷使用者權限
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
+        }
+
         toast('登入成功','success','top-right');
         return redirect('home');
     }
@@ -160,9 +166,10 @@ class UserController extends Controller
         $sPassword = $_oRequest->input('password');
         $sRePassword = $_oRequest->input('re_password');
 
-        if (!$_oRequest->session()->has('login_user_info')){
-            toast('使用者已被登出！！','error','top-right');
-            return redirect('login');
+        ## 判斷使用者權限
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         ## 簡易判斷

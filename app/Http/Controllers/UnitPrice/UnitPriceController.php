@@ -27,8 +27,9 @@ class UnitPriceController extends Controller
         $aResult = [];
 
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         ## 取得工程主項目列表
@@ -76,8 +77,9 @@ class UnitPriceController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iProjectID = (int) $_oRequest->input('project_id');
@@ -110,8 +112,9 @@ class UnitPriceController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iSubProjectID = (int) $_oRequest->input('id');
@@ -146,8 +149,9 @@ class UnitPriceController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iSubProjectID = (int) $_oRequest->input('id');
@@ -171,8 +175,9 @@ class UnitPriceController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $sProjectName = $_oRequest->input('project_name');
@@ -202,8 +207,9 @@ class UnitPriceController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iProjectID = (int) $_oRequest->input('id');
@@ -236,8 +242,9 @@ class UnitPriceController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iProjectID = (int) $_oRequest->input('id');
@@ -267,9 +274,11 @@ class UnitPriceController extends Controller
     )
     {
         $aResult = [];
+
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         ## 取得系統主項目列表
@@ -319,8 +328,9 @@ class UnitPriceController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $sSystemName = $_oRequest->input('system_name');
@@ -351,8 +361,9 @@ class UnitPriceController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iSystemID = (int) $_oRequest->input('system_id');
@@ -389,8 +400,9 @@ class UnitPriceController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iSubSystemID = (int) $_oRequest->input('id');
@@ -414,8 +426,9 @@ class UnitPriceController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
         
         $iSubSystemID = (int) $_oRequest->input('id');
@@ -454,8 +467,9 @@ class UnitPriceController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iSystemID = (int) $_oRequest->input('id');
@@ -485,8 +499,9 @@ class UnitPriceController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iSystemID = (int) $_oRequest->input('id');

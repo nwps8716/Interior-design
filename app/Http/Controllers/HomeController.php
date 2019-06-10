@@ -15,9 +15,10 @@ class HomeController extends Controller
      */
     public function index(Request $_oRequest)
     {
-        if (!$_oRequest->session()->has('login_user_info')){
-            toast('使用者已被登出！！','error','top-right');
-            return redirect('login');
+        ## 判斷使用者權限
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
         return view('home');
     }

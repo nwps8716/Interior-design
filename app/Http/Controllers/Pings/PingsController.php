@@ -38,8 +38,9 @@ class PingsController extends Controller
         $fSystemDiscount = 0;
 
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, true) !== 'success') {
-            return redirect($this->checkSession($_oRequest, true));
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         ## 使用者登入資訊
@@ -105,8 +106,9 @@ class PingsController extends Controller
         $aLevelPings = $aSpecialTableData = [];
 
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, true) !== 'success') {
-            return redirect($this->checkSession($_oRequest, true));
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iTotalBudget = (int) $_oRequest->input('total_budget');
@@ -148,8 +150,9 @@ class PingsController extends Controller
     public function editPercent(Request $_oRequest, PingsModle $_oPingsModle)
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, false) !== 'success') {
-            return redirect($this->checkSession($_oRequest, false));
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iEngineering_budget = (int) $_oRequest->input('engineering_budget');
@@ -197,8 +200,9 @@ class PingsController extends Controller
     public function editUserPings(Request $_oRequest, UserModle $_oUserModle)
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, true) !== 'success') {
-            return redirect($this->checkSession($_oRequest, true));
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iPings = (int) $_oRequest->input('pings');
@@ -234,8 +238,9 @@ class PingsController extends Controller
     public function editUserTotalBudget(Request $_oRequest, TotalBudgetModle $_oTotalBudgetModle)
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, true) !== 'success') {
-            return redirect($this->checkSession($_oRequest, true));
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iTotalBudget = (int) $_oRequest->input('total_budget');

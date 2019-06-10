@@ -62,8 +62,9 @@ class BudgetController extends Controller
         $iLevel = (int) $_oRequest->input('level_id', 1);
 
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, true) !== 'success') {
-            return redirect($this->checkSession($_oRequest, true));
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         ## 使用者登入資訊
@@ -169,8 +170,9 @@ class BudgetController extends Controller
         $iLevel = (int) $_oRequest->input('level_id', 1);
 
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, true) !== 'success') {
-            return redirect($this->checkSession($_oRequest, true));
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         ## 使用者登入資訊
@@ -283,8 +285,9 @@ class BudgetController extends Controller
         $aTotalData = $aSystem = $aResult = [];
 
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, true) !== 'success') {
-            return redirect($this->checkSession($_oRequest, true));
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         $iLevel = (int) $_oRequest->input('level_id', 1);
@@ -391,8 +394,9 @@ class BudgetController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, true) !== 'success') {
-            return redirect($this->checkSession($_oRequest, true));
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         ## 分類ID(工程：1、系統：2、好禮贈送：3)
@@ -427,8 +431,9 @@ class BudgetController extends Controller
     )
     {
         ## 判斷使用者權限
-        if ($this->checkSession($_oRequest, true) !== 'success') {
-            return redirect($this->checkSession($_oRequest, true));
+        $sCheckSession = $this->checkSession($_oRequest, true);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
         }
 
         ## 分類ID(工程：1、系統：2、好禮贈送：3)
