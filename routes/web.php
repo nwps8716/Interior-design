@@ -24,6 +24,10 @@ Route::get('/logout', 'User\UserController@getLogout');
 Route::get('/adduser', 'User\UserController@getCreateUser');
 Route::post('/user/create', 'User\UserController@createUser');
 Route::put('/user/password', 'User\UserController@putUserPassword');
+## IP
+Route::get('/whiteip', 'User\IpController@getWhiteIps');
+Route::post('/whiteip', 'User\IpController@postWhiteIp');
+Route::delete('/whiteip', 'User\IpController@deleteWhiteIp');
 ## 工程單價
 Route::get('/engineering/unitprice', 'UnitPrice\UnitPriceController@getEngineeringList');
 Route::post('/engineering', 'UnitPrice\UnitPriceController@createEngineering');

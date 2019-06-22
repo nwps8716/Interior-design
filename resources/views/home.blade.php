@@ -25,6 +25,9 @@
     <div class="bg-light border-right" id="sidebar-wrapper">
       <div class="sidebar-heading"><a href="/home" class="list-group-item-action">窩百態系統</a></div>
       <div class="list-group list-group-flush">
+        @if(Session::get('login_user_info')['level'] < 3)
+          <a href="/whiteip" class="list-group-item list-group-item-action bg-light">白名單IP設置</a>
+        @endif
         <a href="/pings" class="list-group-item list-group-item-action bg-light">坪數估價</a>
         @if(Session::get('login_user_info')['level'] < 3)
           <a href="/engineering/unitprice" class="list-group-item list-group-item-action bg-light">工程單價</a>
