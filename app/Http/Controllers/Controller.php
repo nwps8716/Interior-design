@@ -16,6 +16,7 @@ class Controller extends BaseController
     /**
      * 檢查使用者權限
      *
+     * @param  boolean $_bShowToVisitor  是否可以給訪客查看頁面
      * @return boolean
      */
     public function checkSession(Request $_oRequest, $_bShowToVisitor)
