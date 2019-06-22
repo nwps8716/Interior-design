@@ -17,6 +17,7 @@ class CreateWhiteIPSTable extends Migration
         {
             $table->increments('id')->unique()->comment('流水號');
             $table->string('ip', 255)->comment('白名單IP');
+            $table->string('remark', 100)->comment('備註')->nullable();
         });
     }
 

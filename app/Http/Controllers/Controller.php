@@ -27,7 +27,7 @@ class Controller extends BaseController
         $aWhiteIP = WhiteIPModle::get()->pluck('ip')->toArray();
 
         ## 判斷IP不在白名單內
-        if ($aLoginUser['level'] === 3 && !in_array($_SERVER['REMOTE_ADDR'], $aWhiteIP)) {
+        if ((int) $aLoginUser['level'] === 3 && !in_array($_SERVER['REMOTE_ADDR'], $aWhiteIP)) {
             $_oRequest->session()->flush();
             return 'noservice';
 
@@ -37,7 +37,7 @@ class Controller extends BaseController
             return 'login';
 
         ## 判斷使用者層級有無權限查看此頁面
-        } elseif ($aLoginUser['level'] === 3 && $_bShowToVisitor === false) {
+        } elseif ((int) $aLoginUser['level'] === 3 && $_bShowToVisitor === false) {
             toast('使用者無權限！！','error','top-right');
             return 'home';
         }
