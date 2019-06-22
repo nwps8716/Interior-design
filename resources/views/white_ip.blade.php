@@ -21,20 +21,22 @@
         <span class="white_ip-span">
           <thead>
             <tr class="whiteip-title">
-              <td >ＩＰ編號</td>
+              <td >流水號</td>
               <td >ＩＰ</td>
+              <td >備註</td>
               <td colspan = 2>Actions</td>
             </tr>
           </thead>
-          @foreach($ip_list as $id => $ip)
+          @foreach($ip_list as $id => $value)
             <tbody>
               <td class="id-td">{{$id}}</td>
-              <td class="ip-td">{{$ip}}</td>
+              <td class="ip-td">{{$value['ip']}}</td>
+              <td class="remark-td">{{$value['remark']}}</td>
               <td class="action-td">
                 <button
                   id="delete"
                   class="delete-modal btn btn-danger"
-                  data-ip="{{$ip}}"
+                  data-ip="{{$value['ip']}}"
                   data-toggle="modal"
                   data-target="#delWhiteIp">
                     <span class="glyphicon glyphicon-trash">刪除</span>
@@ -59,7 +61,11 @@
               <div class="add-ip-div">
                 <div style="margin-bottom: 6px;">
                   白名單IP:
-                  <input type="text" class="add-white_ip" id="add-white_ip">
+                  <input type="text" class="form-control" id="add-white_ip">
+                </div>
+                <div style="margin-bottom: 6px;">
+                  備註:
+                  <input type="text" class="form-control" id="add-white_ip-remark">
                 </div>
               </div>
             </div>
@@ -105,7 +111,8 @@
       type: 'post',
       url: '/whiteip',
       data: {
-        'white_ip': $(".add-white_ip").val()
+        'white_ip': $("#add-white_ip").val(),
+        'remark': $("#add-white_ip-remark").val()
       },
       success: function(resp) {
         var title = 'Success';

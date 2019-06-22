@@ -9,6 +9,7 @@ class WhiteIP extends Model
     protected $fillable = [
         'id',
         'ip',
+        'remark'
     ];
 
     protected $table = 'white_ip';

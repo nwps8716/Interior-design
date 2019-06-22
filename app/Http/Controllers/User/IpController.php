@@ -25,7 +25,6 @@ class IpController extends Controller
 
         $aWhiteIps = $_oWhiteIPModle
             ->get()
-            ->pluck('ip')
             ->toArray();
 
         return view('white_ip', [
@@ -47,6 +46,7 @@ class IpController extends Controller
         }
 
         $sWhiteIP = $_oRequest->input('white_ip');
+        $sRemark = $_oRequest->input('remark');
 
         ## 驗證IP格式
         if (!filter_var($sWhiteIP, FILTER_VALIDATE_IP) || empty($sWhiteIP)) {
@@ -64,7 +64,8 @@ class IpController extends Controller
         try {
             $bResult = $_oWhiteIPModle->insert(
                 [
-                    'ip' => $sWhiteIP
+                    'ip' => $sWhiteIP,
+                    'remark' =>$sRemark
                 ]
             );
         } catch (\Exception $e) {
