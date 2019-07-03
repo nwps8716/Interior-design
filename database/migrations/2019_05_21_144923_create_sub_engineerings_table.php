@@ -19,6 +19,7 @@ class CreateSubEngineeringsTable extends Migration
             $table->mediumInteger('unit_price')->comment('工程子項目單價');
             $table->string('unit', 32)->comment('工程子項目單位');
             $table->unsignedInteger('project_id')->comment('工程大項目ID');
+            $table->unsignedInteger('sort')->comment('排序');
             $table->string('remark', 255)->comment('備註')->default('');
         });
     }

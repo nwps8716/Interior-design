@@ -28,6 +28,9 @@ Route::put('/user/password', 'User\UserController@putUserPassword');
 Route::get('/whiteip', 'User\IpController@getWhiteIps');
 Route::post('/whiteip', 'User\IpController@postWhiteIp');
 Route::delete('/whiteip', 'User\IpController@deleteWhiteIp');
+## 工程排序
+Route::get('/engineering/{id}/sort', 'UnitPrice\UnitPriceController@getSortList');
+Route::put('/engineering/{id}/sort', 'UnitPrice\UnitPriceController@putEngineeringSort');
 ## 工程單價
 Route::get('/engineering/unitprice', 'UnitPrice\UnitPriceController@getEngineeringList');
 Route::post('/engineering', 'UnitPrice\UnitPriceController@createEngineering');
