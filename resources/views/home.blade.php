@@ -12,6 +12,7 @@
   <title>窩百態系統家具</title>
   @section('style')
   <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="//apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
   @show
 
 </head>
@@ -20,13 +21,19 @@
   @include('sweetalert::alert')
 
   <div class="d-flex" id="wrapper">
-
     <!-- Sidebar -->
     <div class="bg-light border-right" id="sidebar-wrapper">
       <div class="sidebar-heading"><a href="/home" class="list-group-item-action">窩百態系統</a></div>
       <div class="list-group list-group-flush">
         @if(Session::get('login_user_info')['level'] < 3)
-          <a href="/whiteip" class="list-group-item list-group-item-action bg-light">白名單IP設置</a>
+          <ul id="treeview">
+            <li><span class="caret">系統設置</span>
+              <ul class="nested">
+                <li class="li-set"><a href="/whiteip">白名單IP設置</a></li>
+                <li class="li-set"><a href="/engineering/sort">工程排序設置</a></li>
+              </ul>
+            </li>
+          </ul>
         @endif
         <a href="/pings" class="list-group-item list-group-item-action bg-light">坪數估價</a>
         @if(Session::get('login_user_info')['level'] < 3)
@@ -117,6 +124,9 @@
   <script src="{{asset('js/jquery.min.js')}}"></script>
   <script src="{{asset('js/bootstrap.bundle.min.js')}}"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <!-- Sort-->
+  <script src="//apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
   @show
 
   <!-- Menu Toggle Script -->
@@ -147,6 +157,15 @@
         }
       });
     });
+    // menu tree
+    var toggler = document.getElementsByClassName("caret");
+    var i;
+    for (i = 0; i < toggler.length; i++) {
+      toggler[i].addEventListener("click", function() {
+        this.parentElement.querySelector(".nested").classList.toggle("active");
+        this.classList.toggle("caret-down");
+      });
+    }
   </script>
 
 </body>
@@ -198,5 +217,42 @@ body {
     margin-left: -15rem;
   }
 } */
+
+/* menu tree */
+ul, #treeview {
+  list-style-type: none;
+
+}
+#treeview {
+  margin: 0;
+  padding: 12px 0px;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-width: 1px 0px 0px 0px;
+}
+.caret {
+  cursor: pointer;
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none;
+}
+.caret::before {
+  content: "\25B6";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+.caret-down::before {
+  -ms-transform: rotate(90deg); /* IE 9 */
+  -webkit-transform: rotate(90deg); /* Safari */'
+  transform: rotate(90deg);
+}
+.nested {
+  display: none;
+  padding: 5px 0px 5px 30px;
+}
+.active {
+  display: block;
+}
 </style>
 </html>
