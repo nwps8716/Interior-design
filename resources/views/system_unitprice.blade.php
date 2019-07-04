@@ -100,6 +100,9 @@
       @endforeach
     <div>
   </div>
+@endsection
+
+@section('content')
   <!-- 系統分類設定 -->
   <div id="systemSet" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog">
@@ -329,9 +332,6 @@
           </div>
       </div>
   </div>
-@endsection
-
-@section('content')
 @endsection
 
 @section('script')

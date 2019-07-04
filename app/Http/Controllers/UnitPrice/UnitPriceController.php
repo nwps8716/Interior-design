@@ -522,4 +522,128 @@ class UnitPriceController extends Controller
 
         return response()->json(['result' => true]);
     }
+
+    /**
+     * 取得工程排序設定列表
+     *
+     * @return array
+     */
+    public function getSortList(
+        Request $_oRequest,
+        EngineeringModle $_oEngineeringModle,
+        SubEngineeringModle $_oSubEngineeringModle,
+        SystemModle $_oSystemModle,
+        SubSystemModle $_oSubSystemModle,
+        $_iCategoryID
+    )
+    {
+        $aResult = $aSubResult = $aProjectList = [];
+
+        ## 判斷使用者權限
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
+        }
+
+        ## 取得工程主項目列表
+        $alargeProject = $_oEngineeringModle
+            ->get()
+            ->sortBy('sort')
+            ->keyBy('sort')
+            ->toArray();
+
+        ## 取得大項目排序
+        $aProjectList[0] = ((int) $_iCategoryID === 1) ? '裝潢工程大項' : '系統工程大項';
+        $aProjectListTmp = array_pluck($alargeProject, 'project_name', 'project_id');
+        $aProjectList = $aProjectList + $aProjectListTmp;
+
+        ## 取得工程子項目列表
+        $aSubResult = $_oSubEngineeringModle
+            ->get()
+            ->toArray();
+
+        $aResult[0] =  $alargeProject;
+        foreach ($aSubResult as $value) {
+            if (!empty($aProjectList[$value['project_id']])) {
+                $aResult[$value['project_id']][$value['sort']] = [
+                    'sub_project_id' => $value['sub_project_id'],
+                    'sub_project_name' => $value['sub_project_name'],
+                    'sort' => $value['sort']
+                ];
+                ksort($aResult[$value['project_id']]);
+            }
+        }
+
+        return view('engineering_sort', [
+            'project_list' => $aProjectList,
+            'sort_data' => $aResult,
+        ]);
+        echo "<pre>";
+        print_r($_iCategoryID);
+        echo "<pre>";
+        print_r($aProjectList);
+        echo "<pre> ---- <pre>";
+        echo "<pre>";
+        print_r($aResult);
+        exit;
+    }
+
+    /**
+     * 修改工程大項目or子項目排序
+     *
+     * @return array
+     */
+    public function putEngineeringSort(
+        Request $_oRequest,
+        EngineeringModle $_oEngineeringModle,
+        SubEngineeringModle $_oSubEngineeringModle,
+        SystemModle $_oSystemModle,
+        SubSystemModle $_oSubSystemModle,
+        $_iCategoryID
+    )
+    {
+        $aResult = [];
+
+        ## 判斷使用者權限
+        $sCheckSession = $this->checkSession($_oRequest, false);
+        if ($sCheckSession !== 'success') {
+            return redirect($sCheckSession)->with(['ip' => $_SERVER['REMOTE_ADDR']]);
+        }
+
+        $bSubStatus = (boolean) $_oRequest->input('sub_status');
+        $aSortData = (array) $_oRequest->input('sort_data');
+
+        if ((int) $_iCategoryID === 1) {
+            $oSortModel = ($bSubStatus) ? $_oSubEngineeringModle : $_oEngineeringModle;
+            $sIDName = ($bSubStatus) ? 'sub_project_id' : 'project_id';
+        } elseif ((int) $_iCategoryID === 2) {
+            $oSortModel = ($bSubStatus) ? $_oSubSystemModle : $_oSystemModle;
+            $sIDName = ($bSubStatus) ? 'sub_system_id' : 'system_id';
+        }
+
+        foreach ($aSortData as $sort => $id) {
+            $iSort = $sort + 1;
+            ## 更新工程排序
+            $bResult = $oSortModel
+                ->where($sIDName, $id)
+                ->update(
+                    [
+                        'sort' => $iSort,
+                    ]
+                );
+        }
+
+        return response()->json(['result' => true]);
+        echo "<pre>";
+        var_dump($_iCategoryID);
+        echo "<pre>";
+        var_dump($bSubStatus);
+        echo "<pre>";
+        var_dump($sIDName);
+        echo "<pre>";
+        print_r($aSortData);
+        echo "<pre>";
+        print_r($oSortModel);
+        exit;
+    }
 }

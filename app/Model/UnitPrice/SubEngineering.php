@@ -12,6 +12,7 @@ class SubEngineering extends Model
         'unti_price',
         'unti',
         'project_id',
+        'sort',
     ];
     protected $table = 'sub_engineering';
     protected $primaryKey = 'sub_project_id';
