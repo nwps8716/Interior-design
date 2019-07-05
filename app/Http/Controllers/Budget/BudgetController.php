@@ -121,7 +121,7 @@ class BudgetController extends Controller
             $iSubProjectNum = (isset($aUserBudget[$aValue['sub_project_id']])) ?
                 $aUserBudget[$aValue['sub_project_id']]['sub_project_number'] : 0;
 
-            $aResult[$aValue['project_id']][] = [
+            $aResult[$aValue['project_id']][$aValue['sort']] = [
                 'sub_project_id' => $aValue['sub_project_id'],
                 'sub_project_name' => $aValue['sub_project_name'],
                 'unit_price' => $aValue['unit_price'],
@@ -129,6 +129,7 @@ class BudgetController extends Controller
                 'number' => $iSubProjectNum,
                 'remark' => $aValue['remark']
             ];
+            ksort($aResult[$aValue['project_id']]);
 
             ## 總小記
             $iSubTotal += ($iSubProjectNum * $aValue['unit_price']);
