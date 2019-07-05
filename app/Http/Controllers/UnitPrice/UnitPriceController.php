@@ -51,13 +51,14 @@ class UnitPriceController extends Controller
 
         ## 整理資料
         foreach ($aSubEngineering as $iKey => $aValue) {
-            $aResult[$aValue['project_id']][] = [
+            $aResult[$aValue['project_id']][$aValue['sort']] = [
                 'sub_project_id' => $aValue['sub_project_id'],
                 'sub_project_name' => $aValue['sub_project_name'],
                 'unit_price' => $aValue['unit_price'],
                 'unit' => $aValue['unit'],
                 'remark' => $aValue['remark']
             ];
+            ksort($aResult[$aValue['project_id']]);
         }
 
         return view('engineering_unitprice', [
@@ -88,13 +89,18 @@ class UnitPriceController extends Controller
         $sUnit = $_oRequest->input('unit');
         $sRemark = $_oRequest->input('remark');
 
+        $iLastSort = $_oSubEngineeringModle
+            ->where('project_id', $iProjectID)
+            ->max('sort');
+
         $bResult = $_oSubEngineeringModle->insert(
             [
                 'sub_project_name' => $sSubProjectName,
                 'project_id' => $iProjectID,
                 'unit_price' => $iUnitPrice,
                 'unit' => $sUnit,
-                'remark' => $sRemark
+                'remark' => $sRemark,
+                'sort' => ($iLastSort + 1),
             ]
         );
 
