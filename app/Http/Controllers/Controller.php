@@ -23,9 +23,10 @@ class Controller extends BaseController
     {
         $aLoginUser = $_oRequest->session()->get('login_user_info');
 
+        ## 工程師維護網站專用
         if ($aLoginUser['user_name'] !== 'admin' && $aLoginUser['level'] > 1) {
-            $_oRequest->session()->flush();
-            return 'maintenance';
+            // $_oRequest->session()->flush();
+            // return 'maintenance';
         }
 
         ## 取得白名單
