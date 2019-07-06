@@ -16,6 +16,9 @@ Route::get('/', function () {
 Route::get('/noservice', function () {
     return view('noservice');
 });
+Route::get('/maintenance', function () {
+    return view('maintenance');
+});
 
 Route::get('/home', 'HomeController@index');
 Route::get('/login', 'User\UserController@getLogin');
