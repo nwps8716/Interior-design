@@ -30,7 +30,7 @@
             <li><span class="caret">系統設置</span>
               <ul class="nested">
                 <li class="li-set"><a href="/whiteip">白名單IP設置</a></li>
-                <li class="li-set"><a href="/engineering/1/sort">工程排序設置</a></li>
+                <li class="li-set"><a href="/engineering/sort">工程排序設置</a></li>
               </ul>
             </li>
           </ul>

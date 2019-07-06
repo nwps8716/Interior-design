@@ -12,6 +12,7 @@ use App\Model\UnitPrice\System As SystemModle;
 use App\Model\UnitPrice\SubSystem As SubSystemModle;
 use App\Model\User\UserBudget As UserBudgetModle;
 use App\Model\Appraisal\TotalBudget As TotalBudgetModle;
+use App\Model\UnitPrice\SubSystemSort As SubSystemSortModle;
 use Alert;
 use Response;
 
@@ -279,7 +280,8 @@ class BudgetController extends Controller
         SystemModle $_oSystemModle,
         SubSystemModle $_oSubSystemModle,
         UserBudgetModle $_oUserBudgetModle,
-        TotalBudgetModle $_oTotalBudgetModle
+        TotalBudgetModle $_oTotalBudgetModle,
+        SubSystemSortModle $_oSubSystemSortModle
     )
     {
         $iTotal = $iSubTotal = 0;
@@ -345,11 +347,27 @@ class BudgetController extends Controller
             ->keyBy('sub_project_id')
             ->toArray();
 
+        ## 取得系統工程子項目排序
+        $aSubSystemSort = $_oSubSystemSortModle
+            ->get()
+            ->toArray();
+        ## 整理桶稱的排序
+        foreach ($aSubSystemSort as $aData) {
+            $aSortResult[$aData['system_id']][$aData['sort']] = $aData['general_name'];
+            ksort($aSortResult[$aData['system_id']]);
+        }
+
         ## 整理資料
         foreach ($aSubSystem as $iKey => $aValue) {
             ## 子項目數量
             $iSubProjectNum = (isset($aUserBudget[$aValue['sub_system_id']])) ?
                 $aUserBudget[$aValue['sub_system_id']]['sub_project_number'] : 0;
+
+            if (!empty($aSortResult[$aValue['system_id']]) && empty($aResult[$aValue['system_id']]) ) {
+                foreach ($aSortResult[$aValue['system_id']] as $gname) {
+                    $aResult[$aValue['system_id']][$gname] = [];
+                }
+            }
 
             $aResult[$aValue['system_id']][$aValue['general_name']][] = [
                 'sub_system_id' => $aValue['sub_system_id'],
