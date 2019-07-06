@@ -69,6 +69,7 @@
                         id="edit-sub"
                         class="edit-modal btn btn-success"
                         data-id="{{$sub_name['sub_system_id']}}"
+                        data-sid="{{$id}}"
                         data-name="{{$sub_name['sub_system_name']}}"
                         data-generalname="{{$sub_name['general_name']}}"
                         data-format="{{$sub_name['format']}}"
@@ -84,7 +85,9 @@
                         id="delete-sub"
                         class="delete-modal btn btn-danger"
                         data-id="{{$sub_name['sub_system_id']}}"
+                        data-sid="{{$id}}"
                         data-name="{{$sub_name['sub_system_name']}}"
+                        data-generalname="{{$sub_name['general_name']}}"
                         data-systemname="{{$systemname}}"
                         data-toggle="modal"
                         data-target="#delSubSystem">
@@ -208,6 +211,8 @@
                 </div>
               </div>
               <input type="hidden" class="form-control" id="edit-sub-id">
+              <input type="hidden" class="form-control" id="edit-sid">
+              <input type="hidden" class="form-control" id="edit_origin_general_name">
             </form>
           </div>
           <div class="modal-footer">
@@ -237,6 +242,8 @@
             </form>
           </div>
           <input type="hidden" class="form-control" id="del-sub-id">
+          <input type="hidden" class="form-control" id="del-sid">
+          <input type="hidden" class="form-control" id="del-general_name">
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
             <button id="delSubSystem-btn" type="button" class="btn btn-danger">確定刪除</button>
@@ -445,6 +452,8 @@
   // 修改子項目 dialog 事件
   $('.edit-modal').on('click', function() {
     $('#edit-sub-id').val($(this).data('id'));
+    $('#edit-sid').val($(this).data('sid'));
+    $('#edit_origin_general_name').val($(this).data('generalname'));
     $('#edit-subsystem-title').text('系統分類: ' + $(this).data('systemname'));
     $('#edit_general_name').val($(this).data('generalname'));
     $('#sub_system_name').val($(this).data('name'));
@@ -460,7 +469,9 @@
       url: '/subsystem',
       data: {
         'id': $('#edit-sub-id').val(),
+        'sid': $('#edit-sid').val(),
         'general_name': $('#edit_general_name').val(),
+        'origin_general_name': $('#edit_origin_general_name').val(),
         'name': $('#sub_system_name').val(),
         'format': $('#edit-format').val(),
         'unit_price': $('#unit_price').val(),
@@ -486,6 +497,8 @@
     $('#del-sub-title').text('系統分類: ' + $(this).data('systemname'));
     $('#del-sub-content').text('內容物: ' + $(this).data('name'));
     $('#del-sub-id').val($(this).data('id'));
+    $('#del-sid').val($(this).data('sid'));
+    $('#del-general_name').val($(this).data('generalname'));
   });
   // 刪除子項目
   $('#delSubSystem-btn').on('click', function() {
@@ -493,7 +506,9 @@
       type: 'delete',
       url: '/subsystem',
       data: {
-        'id': $('#del-sub-id').val()
+        'id': $('#del-sub-id').val(),
+        'sid': $('#del-sid').val(),
+        'general_name': $('#del-general_name').val(),
       },
       success: function(resp) {
         swal({
