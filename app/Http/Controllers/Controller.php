@@ -23,6 +23,11 @@ class Controller extends BaseController
     {
         $aLoginUser = $_oRequest->session()->get('login_user_info');
 
+        if ($aLoginUser['user_name'] !== 'admin' && $aLoginUser['level'] > 1) {
+            $_oRequest->session()->flush();
+            return 'maintenance';
+        }
+
         ## 取得白名單
         $aWhiteIP = WhiteIPModle::get()->pluck('ip')->toArray();
 
