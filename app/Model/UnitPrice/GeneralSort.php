@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class GeneralSort extends Model
 {
     protected $fillable = [
-        'sgn_id',
-        'system_id',
         'sub_system_id',
         'sort',
     ];

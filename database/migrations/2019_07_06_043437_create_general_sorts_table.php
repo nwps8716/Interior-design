@@ -14,7 +14,6 @@ class CreateGeneralSortsTable extends Migration
     public function up()
     {
         Schema::create('general_sort', function (Blueprint $table) {
-            $table->unsignedInteger('system_id')->comment('系統大項目ID');
             $table->unsignedInteger('sub_system_id')->unique()->comment('系統子項目ID');
             $table->unsignedInteger('sort')->comment('排序');
         });
