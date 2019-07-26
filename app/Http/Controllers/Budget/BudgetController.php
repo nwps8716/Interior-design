@@ -13,6 +13,7 @@ use App\Model\UnitPrice\SubSystem As SubSystemModle;
 use App\Model\User\UserBudget As UserBudgetModle;
 use App\Model\Appraisal\TotalBudget As TotalBudgetModle;
 use App\Model\UnitPrice\SubSystemSort As SubSystemSortModle;
+use App\Model\UnitPrice\GeneralSort As GeneralSortModle;
 use Alert;
 use Response;
 
@@ -281,7 +282,8 @@ class BudgetController extends Controller
         SubSystemModle $_oSubSystemModle,
         UserBudgetModle $_oUserBudgetModle,
         TotalBudgetModle $_oTotalBudgetModle,
-        SubSystemSortModle $_oSubSystemSortModle
+        SubSystemSortModle $_oSubSystemSortModle,
+        GeneralSortModle $_oGeneralSortModle
     )
     {
         $iTotal = $iSubTotal = 0;
@@ -357,6 +359,12 @@ class BudgetController extends Controller
             ksort($aSortResult[$aData['system_id']]);
         }
 
+        ## 取得系統工程 - 統稱細項排序
+        $aGeneralSort = $_oGeneralSortModle
+            ->get()
+            ->pluck('sort', 'sub_system_id')
+            ->toArray();
+
         ## 整理資料
         foreach ($aSubSystem as $iKey => $aValue) {
             ## 子項目數量
@@ -369,7 +377,11 @@ class BudgetController extends Controller
                 }
             }
 
-            $aResult[$aValue['system_id']][$aValue['general_name']][] = [
+            ## 判斷有排序資料
+            $iGeneralDetailSort = (isset($aGeneralSort[$aValue['sub_system_id']])) ?
+                $aGeneralSort[$aValue['sub_system_id']] - 1 : $aValue['sub_system_id'];
+
+            $aResult[$aValue['system_id']][$aValue['general_name']][$iGeneralDetailSort] = [
                 'sub_system_id' => $aValue['sub_system_id'],
                 'general_name' => $aValue['general_name'],
                 'sub_system_name' => $aValue['sub_system_name'],
@@ -379,6 +391,7 @@ class BudgetController extends Controller
                 'number' => $iSubProjectNum,
                 'remark' => $aValue['remark']
             ];
+            ksort($aResult[$aValue['system_id']][$aValue['general_name']]);
 
             ## 總小記
             $iSubTotal += ($iSubProjectNum * $aValue['unit_price']);

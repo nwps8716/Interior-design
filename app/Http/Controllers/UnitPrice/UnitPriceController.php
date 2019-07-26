@@ -279,7 +279,8 @@ class UnitPriceController extends Controller
         Request $_oRequest,
         SystemModle $_oSystemModle,
         SubSystemModle $_oSubSystemModle,
-        SubSystemSortModle $_oSubSystemSortModle
+        SubSystemSortModle $_oSubSystemSortModle,
+        GeneralSortModle $_oGeneralSortModle
     )
     {
         $aResult = [];
@@ -317,6 +318,12 @@ class UnitPriceController extends Controller
             ksort($aSortResult[$aData['system_id']]);
         }
 
+        ## 取得系統工程 - 統稱細項排序
+        $aGeneralSort = $_oGeneralSortModle
+            ->get()
+            ->pluck('sort', 'sub_system_id')
+            ->toArray();
+
         ## 整理資料
         foreach ($aSubSystem as $iKey => $aValue) {
             if (!empty($aSortResult[$aValue['system_id']]) && empty($aResult[$aValue['system_id']]) ) {
@@ -325,7 +332,11 @@ class UnitPriceController extends Controller
                 }
             }
 
-            $aResult[$aValue['system_id']][$aValue['general_name']][] = [
+            ## 判斷有排序資料
+            $iGeneralDetailSort = (isset($aGeneralSort[$aValue['sub_system_id']])) ?
+                $aGeneralSort[$aValue['sub_system_id']] - 1 : $aValue['sub_system_id'];
+
+            $aResult[$aValue['system_id']][$aValue['general_name']][$iGeneralDetailSort] = [
                 'sub_system_id' => $aValue['sub_system_id'],
                 'general_name' => $aValue['general_name'],
                 'sub_system_name' => $aValue['sub_system_name'],
@@ -334,6 +345,7 @@ class UnitPriceController extends Controller
                 'unit' => $aValue['unit'],
                 'remark' => $aValue['remark']
             ];
+            ksort($aResult[$aValue['system_id']][$aValue['general_name']]);
         }
         
         return view('system_unitprice', [
@@ -383,7 +395,8 @@ class UnitPriceController extends Controller
     public function createSubSystem(
         Request $_oRequest,
         SubSystemModle $_oSubSystemModle,
-        SubSystemSortModle $_oSubSystemSortModle
+        SubSystemSortModle $_oSubSystemSortModle,
+        GeneralSortModle $_oGeneralSortModle
     )
     {
         ## 判斷使用者權限
@@ -400,7 +413,27 @@ class UnitPriceController extends Controller
         $sUnit = $_oRequest->input('unit');
         $sRemark = $_oRequest->input('remark');
 
-        $bResult = $_oSubSystemModle->insert(
+        ## 取得該統稱細項的總數
+        $aGeneralDetail = $_oSubSystemModle
+            ->where('system_id', $iSystemID)
+            ->where('general_name', $sGeneralName)
+            ->get()
+            ->pluck('sub_system_id', 'sub_system_id')
+            ->toArray();
+
+        ## 取得系統工程 - 統稱細項排序
+        $aGeneralSort = $_oGeneralSortModle
+            ->get()
+            ->pluck('sort', 'sub_system_id')
+            ->toArray();
+
+        foreach ($aGeneralDetail as $key => $value) {
+            $aGeneralSortList[$aGeneralSort[$value]] = $value;
+            ksort($aGeneralSortList);
+        }
+        $iGeneralDetailCount = (!empty($aGeneralSortList)) ? array_key_last($aGeneralSortList) : 0;
+
+        $iID = $_oSubSystemModle->insertGetId(
             [
                 'general_name' => $sGeneralName,
                 'sub_system_name' => $sSubSystemName,
@@ -409,6 +442,14 @@ class UnitPriceController extends Controller
                 'unit' => $sUnit,
                 'system_id' => $iSystemID,
                 'remark' => $sRemark
+            ]
+        );
+
+        ## 新增該子項目排序
+        $_oGeneralSortModle->insert(
+            [
+                'sub_system_id' => $iID,
+                'sort' => $iGeneralDetailCount + 1,
             ]
         );
 
@@ -448,7 +489,8 @@ class UnitPriceController extends Controller
     public function deleteSubSystem(
         Request $_oRequest,
         SubSystemModle $_oSubSystemModle,
-        SubSystemSortModle $_oSubSystemSortModle
+        SubSystemSortModle $_oSubSystemSortModle,
+        GeneralSortModle $_oGeneralSortModle
     )
     {
         ## 判斷使用者權限
@@ -476,6 +518,9 @@ class UnitPriceController extends Controller
         ## 刪除系統子項目
         $oSubSystem->where('sub_system_id', $iSubSystemID)->delete();
 
+        ## 刪除系統子項目統稱細項排序
+        $_oGeneralSortModle->where('sub_system_id', $iSubSystemID)->delete();
+
         return response()->json(['result' => true]);
     }
 
@@ -487,7 +532,8 @@ class UnitPriceController extends Controller
     public function putSubSystem(
         Request $_oRequest,
         SubSystemModle $_oSubSystemModle,
-        SubSystemSortModle $_oSubSystemSortModle
+        SubSystemSortModle $_oSubSystemSortModle,
+        GeneralSortModle $_oGeneralSortModle
     )
     {
         ## 判斷使用者權限
@@ -551,6 +597,34 @@ class UnitPriceController extends Controller
                 ]
             );
         }
+
+        ## 取得該統稱細項的總數
+        $aGeneralDetail = $_oSubSystemModle
+            ->where('system_id', $iSystemID)
+            ->where('general_name', $sGeneralName)
+            ->get()
+            ->pluck('sub_system_id', 'sub_system_id')
+            ->toArray();
+
+        ## 取得系統工程 - 統稱細項排序
+        $aGeneralSort = $_oGeneralSortModle
+            ->get()
+            ->pluck('sort', 'sub_system_id')
+            ->toArray();
+
+        foreach ($aGeneralDetail as $key => $value) {
+            $aGeneralSortList[$aGeneralSort[$value]] = $value;
+            ksort($aGeneralSortList);
+        }
+        $iGeneralDetailCount = (!empty($aGeneralSortList)) ? array_key_last($aGeneralSortList) : 0;
+
+        $_oGeneralSortModle
+            ->where('sub_system_id', $iSubSystemID)
+            ->update(
+                [
+                    'sort' => $iGeneralDetailCount + 1,
+                ]
+            );
 
         ## 更新系統子項目
         $bResult = $oSubSystem
@@ -647,11 +721,13 @@ class UnitPriceController extends Controller
         SubEngineeringModle $_oSubEngineeringModle,
         SystemModle $_oSystemModle,
         SubSystemModle $_oSubSystemModle,
-        SubSystemSortModle $_oSubSystemSortModle
+        SubSystemSortModle $_oSubSystemSortModle,
+        GeneralSortModle $_oGeneralSortModle
     )
     {
         $aProject = $aSubProject = $aProjectSort = [];
-        $aSystem = $aSubSystem = $aSystemSort = [];
+        $aSystem = $aSubSystem = $aSystemSort = $aSubSystemSort = [];
+        $aSystemDetailSort = $aGeneralSort = [];
         $aProjectList[0] = '裝潢工程大項';
         $aSystemList[0] = '系統工程大項';
 
@@ -706,11 +782,6 @@ class UnitPriceController extends Controller
             ->get()
             ->toArray();
 
-        // ## 取得系統工程子項目
-        // $aSubSystem = $_oSubSystemModle
-        //     ->get()
-        //     ->toArray();
-
         ## 組系統工程子項目列表
         $aSystemSort[0] =  $aSystem;
         foreach ($aSubSystemSort as $value) {
@@ -732,30 +803,40 @@ class UnitPriceController extends Controller
             }
         }
 
+        ## 取得系統工程子項目
+        $aSubSystem = $_oSubSystemModle
+            ->where('system_id', '!=', 6)
+            ->get()
+            ->toArray();
+
+        ## 取得系統工程 - 統稱細項排序
+        $aGeneralSort = $_oGeneralSortModle
+            ->get()
+            ->pluck('sort', 'sub_system_id')
+            ->toArray();
+
+        ## 判斷哪些系統工程有子項目
+        foreach ($aSubSystem as $value) {
+            $aSystemDetailSort[$value['system_id']][$value['general_name']][$value['sub_system_id']] = [
+                'sub_system_name' => $value['sub_system_name'],
+                'format' => $value['format'],
+                'remark' => $value['remark']
+            ];
+
+            ## 取得該大項有哪些統稱
+            $aGeneral[$value['system_id']][] = $value['general_name'];
+            $aGeneral[$value['system_id']] = array_unique($aGeneral[$value['system_id']]);
+        }
+
         return view('engineering_sort', [
             'project_list' => $aProjectList,
             'system_list' => $aSystemList,
             'project_sort' => $aProjectSort,
             'system_sort' => $aSystemSort,
+            'system_detail_sort' => $aSystemDetailSort,
+            'system_general' => $aGeneral,
+            'general_sort' => $aGeneralSort,
         ]);
-        echo "<pre>";
-        print_r($aSystemList);
-        echo "<pre>";
-        print_r($aProjectList);
-        echo "<pre> ---- <pre>";
-        echo "<pre>";
-        print_r($aSystemID);
-        echo "<pre>";
-        print_r($aSubSystemSort);
-        // echo "<pre>";
-        // print_r($aSubSystem);
-        echo "<pre> ---- <pre>";
-        echo "<pre>";
-        print_r($aSystemSort);
-        echo "<pre> ---- <pre>";
-        echo "<pre>";
-        print_r($aProjectSort);
-        exit;
     }
 
     /**
@@ -770,6 +851,7 @@ class UnitPriceController extends Controller
         SystemModle $_oSystemModle,
         SubSystemModle $_oSubSystemModle,
         SubSystemSortModle $_oSubSystemSortModle,
+        GeneralSortModle $_oGeneralSortModle,
         $_iCategoryID
     )
     {
@@ -784,12 +866,20 @@ class UnitPriceController extends Controller
         $bSubStatus = (boolean) $_oRequest->input('sub_status');
         $aSortData = (array) $_oRequest->input('sort_data');
 
+        ## 裝潢工程 - 大項目or細項
         if ((int) $_iCategoryID === 1) {
             $oSortModel = ($bSubStatus) ? $_oSubEngineeringModle : $_oEngineeringModle;
             $sIDName = ($bSubStatus) ? 'sub_project_id' : 'project_id';
+
+        ## 系統工程 - 大項目or統稱
         } elseif ((int) $_iCategoryID === 2) {
             $oSortModel = ($bSubStatus) ? $_oSubSystemSortModle : $_oSystemModle;
             $sIDName = ($bSubStatus) ? 'sgn_id' : 'system_id';
+
+        ## 系統工程 - 統稱細項
+        } elseif ((int) $_iCategoryID === 3) {
+            $oSortModel = $_oGeneralSortModle;
+            $sIDName = 'sub_system_id';
         }
 
         foreach ($aSortData as $sort => $id) {
@@ -805,16 +895,5 @@ class UnitPriceController extends Controller
         }
 
         return response()->json(['result' => true]);
-        echo "<pre>";
-        var_dump($_iCategoryID);
-        echo "<pre>";
-        var_dump($bSubStatus);
-        echo "<pre>";
-        var_dump($sIDName);
-        echo "<pre>";
-        print_r($aSortData);
-        echo "<pre>";
-        print_r($oSortModel);
-        exit;
     }
 }

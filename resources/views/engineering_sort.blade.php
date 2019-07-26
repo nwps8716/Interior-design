@@ -32,6 +32,15 @@
         aria-selected="false">
           系統工程
       </a>
+      <a class="nav-item nav-link"
+        id="system-detail-tab"
+        data-toggle="tab"
+        href="#chose-system-detail"
+        role="tab"
+        aria-controls="nav-system-detail"
+        aria-selected="false">
+          系統工程 - 細項
+      </a>
     </div>
   </nav>
   <div class="tab-content" id="nav-tabContent">
@@ -137,6 +146,37 @@
         </div>
       </div>
     </div>
+    {{-- 系統工程 - 細項排序 --}}
+    <div class="tab-pane fade" id="chose-system-detail" role="tabpanel" aria-labelledby="nav-system-detail">
+      <div class="row">
+        {{-- 大項目 --}}
+        <div class="col-md-6">
+          <span> 請選擇大項目:
+          <select id="box1">
+            <option value="">-- 請選擇 --</option>
+          @foreach($system_detail_sort as $systemid => $eneral)
+              <option value="{{$systemid}}">{{ $system_list[$systemid] }}</option>
+          @endforeach
+          </select>
+        </div>
+        {{-- 統稱 --}}
+        <div class="col-md-6">
+          <span> 請選擇統稱:
+          <select id="box2">
+          </select>
+        </div>
+        {{-- 統稱 - 細項 --}}
+        <div class="col-md-12" id="general-detail-div">
+          <div class="card">
+            <div class="card-body">
+              <div class="tab-content" id="nav-tabContent">
+                <ul id="sortable-general-detail" class="connectedSortable"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 @endsection
 
@@ -147,11 +187,16 @@
   var changProjectID = 0;
   var changSystemID = 0;
   var category_id = 1;
+  var systemDetailSortData = {!! json_encode($system_detail_sort) !!};
+  var systemGeneral = {!! json_encode($system_general) !!};
+  var generalSort = {!! json_encode($general_sort) !!};
+
   // 切換工程大項目
   $('#change-project').on('click', 'a', function(e) {
     e.preventDefault();
     var choseName = $(this).attr('id');
     category_id = (choseName === 'system-tab') ? 2 : 1;
+    category_id = (choseName === 'system-detail-tab') ? 3 : category_id;
   });
   // 初始設定裝潢工程排序大項目
   $( "#sortable-0" ).sortable({
@@ -198,25 +243,108 @@
     } else if (category_id === 2) {
       productOrder = $('#sortable-system-' + changSystemID).sortable('toArray');
       sub_status = (changSystemID > 0) ? 1 : 0;
+
+    // 系統工程 - 統稱係項
+    } else if (category_id === 3) {
+      productOrder = $('#sortable-general-detail').sortable('toArray');
+      sub_status = 1;
     }
-    $.ajax({
-      type: 'put',
-      url: '/engineering/' + category_id + '/sort',
-      data: {
-        'sub_status': sub_status,
-        'sort_data': productOrder
-      },
-      success: function(resp) {
-        swal({
-          title: "Success",
-          text: "設定成功！",
-          icon: "success",
-          buttons: false,
-          timer: 1500,
+
+    // 判斷有資料才做更新
+    if (Array.isArray(productOrder) && productOrder.length > 0) {
+      $.ajax({
+        type: 'put',
+        url: '/engineering/' + category_id + '/sort',
+        data: {
+          'sub_status': sub_status,
+          'sort_data': productOrder
+        },
+        success: function(resp) {
+          swal({
+            title: "Success",
+            text: "設定成功！",
+            icon: "success",
+            buttons: false,
+            timer: 1500,
+          });
+        }
+      });
+    } else {
+      swal({
+        title: "Error",
+        text: "設定失敗!!",
+        icon: "error",
+        buttons: false,
+        timer: 1500,
+      });
+    }
+  });
+  // 選擇大項目後 - 取得該所有統稱資料
+  $("select#box1").on('change', function(){
+    var selectedId = $(this).val();
+    var subItems = systemGeneral[selectedId];
+    $("select#box2").html('');
+    $("ul#sortable-general-detail").html('');
+    for (var subId in subItems) {
+      var optionFirst = $('<option></option>');
+      var option = $('<option></option>');
+      if (subId == 0) {
+        optionFirst.attr('value', '');
+        optionFirst.html('-- 請選擇 --');
+        $("select#box2").append(optionFirst);
+      }
+      option.attr('value', subId);
+      option.html(subItems[subId]);
+      $("select#box2").append(option);
+    }
+  });
+  // 選擇統稱後 - 取得該所有細項資料
+  $("select#box2").on('change', function(){
+    var systemID = $("select#box1").val();         // 系統工程大項ID
+    var generalList = systemGeneral[systemID];     // 統稱列表
+    var selectedId = $(this).val();                // 統稱ID
+    var li = '';
+    var liList = [];
+
+    // 判斷統稱不為空
+    if (selectedId !== '') {
+      // 統稱
+      var general = generalList[selectedId];
+      // 統稱係項資料
+      var generalDetail = [systemDetailSortData[systemID][general]];
+      $("ul#sortable-general-detail").html('');
+      var test = '';
+      Object.keys(generalDetail[0]).forEach((key) => {
+        const val = generalDetail[0][key];
+        const content = `備註：${val.remark}、 內容：${val.sub_system_name}、 規格：${val.format}`;
+        liList[key] =
+          `<li class="ui-state-default" id="${key}">
+            <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+            <span class="general-detail">${content}</span>
+          </li>`;
+      });
+
+      // 判斷有資料，重新排序
+      if (liList.length > 0) {
+        var liTmp = [liList];
+        var liSortData = [];
+        Object.keys(liTmp[0]).forEach((key) => {
+          liSortData[generalSort[key]] = liTmp[0][key];
+        });
+        liSortData.forEach((item) => {
+          li = li + item
         });
       }
-    });
+    } else {
+      $("ul#sortable-general-detail").html('');
+    }
+    $("ul#sortable-general-detail").append(li);
   });
+  // 初始設定系統工程 - 統稱細項排序
+  $("#sortable-general-detail").sortable({
+    placeholder: "ui-state-highlight"
+  });
+  $("#sortable-general-detail").disableSelection();
 </script>
 @endsection
 
@@ -250,11 +378,14 @@
     position: absolute;
     margin-left: -1.3em;
   }
-  .project_name, .sub_project_name, .general_name, .system_name {
+  .project_name, .sub_project_name, .general_name, .system_name, .general-detail {
     padding: 0px 0px 0px 30px;
   }
   .ui-icon {
     margin-top: 10px;
+  }
+  #general-detail-div {
+    margin-top: 20px;
   }
 </style>
 @endsection
