@@ -431,7 +431,8 @@ class UnitPriceController extends Controller
             $aGeneralSortList[$aGeneralSort[$value]] = $value;
             ksort($aGeneralSortList);
         }
-        $iGeneralDetailCount = (!empty($aGeneralSortList)) ? array_key_last($aGeneralSortList) : 0;
+        $aGeneralSortList = (!empty($aGeneralSortList)) ? array_keys($aGeneralSortList) : [];
+        $iGeneralDetailCount = (!empty($aGeneralSortList)) ? end($aGeneralSortList) : 0;
 
         $iID = $_oSubSystemModle->insertGetId(
             [
@@ -616,7 +617,8 @@ class UnitPriceController extends Controller
             $aGeneralSortList[$aGeneralSort[$value]] = $value;
             ksort($aGeneralSortList);
         }
-        $iGeneralDetailCount = (!empty($aGeneralSortList)) ? array_key_last($aGeneralSortList) : 0;
+        $aGeneralSortList = (!empty($aGeneralSortList)) ? array_keys($aGeneralSortList) : [];
+        $iGeneralDetailCount = (!empty($aGeneralSortList)) ? end($aGeneralSortList) : 0;
 
         $_oGeneralSortModle
             ->where('sub_system_id', $iSubSystemID)
