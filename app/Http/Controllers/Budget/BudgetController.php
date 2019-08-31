@@ -391,10 +391,19 @@ class BudgetController extends Controller
                 'number' => $iSubProjectNum,
                 'remark' => $aValue['remark']
             ];
-            ksort($aResult[$aValue['system_id']][$aValue['general_name']]);
 
             ## 總小記
             $iSubTotal += ($iSubProjectNum * $aValue['unit_price']);
+        }
+
+        ## 重新排序
+        $aResultTmp = $aResult;
+        foreach ($aResultTmp as $iSID => $aGeneralValue) {
+            foreach ($aGeneralValue as $sGeneral => $value) {
+                ksort($value);
+                $aSortData = array_values($value);
+                $aResult[$iSID][$sGeneral] = $aSortData;
+            }
         }
 
         ## 總預算資料

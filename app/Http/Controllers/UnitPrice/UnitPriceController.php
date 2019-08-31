@@ -345,7 +345,16 @@ class UnitPriceController extends Controller
                 'unit' => $aValue['unit'],
                 'remark' => $aValue['remark']
             ];
-            ksort($aResult[$aValue['system_id']][$aValue['general_name']]);
+        }
+
+        ## 重新排序
+        $aResultTmp = $aResult;
+        foreach ($aResultTmp as $iSID => $aGeneralValue) {
+            foreach ($aGeneralValue as $sGeneral => $value) {
+                ksort($value);
+                $aSortData = array_values($value);
+                $aResult[$iSID][$sGeneral] = $aSortData;
+            }
         }
         
         return view('system_unitprice', [
